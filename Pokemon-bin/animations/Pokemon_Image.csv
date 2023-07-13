@@ -1,0 +1,6 @@
+ID,FPS,LOOPTYPE,,
+PokemonReader,10,1,,
+,,,,
+TEXTURE_ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/PokemonList.png,0,16,58,58
+graphics/RubySheet.png,512,1024,256,256

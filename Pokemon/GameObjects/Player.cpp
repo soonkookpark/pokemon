@@ -5,6 +5,7 @@
 #include "ResourceMgr.h"
 void Player::Init()
 {
+	
 	/*RESOURCE_MGR.Load(ResourceTypes::AnimationClip, "animations/idleS.csv");
 	RESOURCE_MGR.Load(ResourceTypes::AnimationClip, "animations/idleF.csv");
 	RESOURCE_MGR.Load(ResourceTypes::AnimationClip, "animations/idleB.csv");
@@ -102,4 +103,14 @@ void Player::SetFlipX(bool filp)
 	sf::Vector2f scale = sprite.getScale();
 	scale.x = !filpX ? abs(scale.x) : -abs(scale.x);
 	sprite.setScale(scale);
+	
+}
+sf::Vector2f Player::GetDirection(int a)
+{
+	if (a == 1)
+		return { direction.x,0 };
+	if (a == 2)
+		return { 0,direction.y };
+	if (a == 3)
+		return { direction.x,direction.y };
 }

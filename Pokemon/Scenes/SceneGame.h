@@ -6,6 +6,8 @@ class SceneGame : public Scene
 protected:
 	sf::FloatRect groundBounds;
 	Player* player;
+	bool battleNow = false;
+	float moveSpeed = 0.f;
 public:
 	SceneGame();
 	virtual ~SceneGame() override = default;

@@ -1,6 +1,6 @@
 "RESOURCE_TYPES (0: 텍스쳐, 1: 폰트, 2: 사운드클럽, 3: 애니메이션 클립)",RESOURCE_PATH
-0,graphics/RubySheet.png
+0,graphics/chikorita.png
 0,graphics/button.png
 0,graphics/clickButton.png
 0,graphics/Park.png
-0,graphics/sprite_sheet.png
+0,graphics/character.png

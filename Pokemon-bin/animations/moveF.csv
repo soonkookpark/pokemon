@@ -1,8 +1,7 @@
 ID,FPS,LOOPTYPE,,
-MoveF,10,1,,
+MoveF,8,1,,
 ,,,,
 TEXTURE_ID,LEFT,TOP,WIDTH,HEIGHT
-graphics/RubySheet.png,0,512,256,256
-graphics/RubySheet.png,256,512,256,256
-graphics/RubySheet.png,512,512,256,256
-graphics/RubySheet.png,768,512,256,256
+graphics/character.png,0,0,157,150
+graphics/character.png,157,0,157,150
+graphics/character.png,314,0,157,150

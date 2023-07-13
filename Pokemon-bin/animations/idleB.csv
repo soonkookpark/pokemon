@@ -1,6 +1,5 @@
 ID,FPS,LOOPTYPE,,
-IdleB,10,1,,
+IdleB,8,1,,
 ,,,,
 TEXTURE_ID,LEFT,TOP,WIDTH,HEIGHT
-graphics/RubySheet.png,512,768,256,256
-graphics/RubySheet.png,512,1024,256,256
+graphics/character.png,628,0,157,150

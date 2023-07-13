@@ -12,6 +12,7 @@ protected:
 
 	std::vector<std::tuple<ResourceTypes, std::string>> resources;
 	std::string resourceListPath;
+
 	std::list<GameObject*> gameObjects; 
 	std::list<GameObject*> removeGameObjects;
 

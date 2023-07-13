@@ -1,6 +1,7 @@
 #pragma once
 #include "SpriteGo.h"
 #include "AnimationController.h"
+#include "scene.h"
 class Player : public SpriteGo
 {
 public:
@@ -23,7 +24,7 @@ protected:
 
 	std::vector<ClipInfo> clipInfos;
 	ClipInfo currentClipInfo;
-
+	std::string resourceListPath1;
 public:
 	Player(const std::string& textureId = "", const std::string& n = "")
 		: SpriteGo(textureId, n) {}
@@ -35,5 +36,6 @@ public:
 
 	bool GetFlipX() const;
 	void SetFlipX(bool filp);
+	sf::Vector2f GetDirection(int a);
 };
 
