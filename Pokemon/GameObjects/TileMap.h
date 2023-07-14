@@ -11,7 +11,9 @@ struct Tile
 class TileMap : public VertexArrayGo
 {
 protected:
-
+	//sf::VertexArray vertexArray;
+	sf::Vector2f tileSize = { 150.f, 150.f };
+	sf::Vector2f texSize = { 150.f, 150.f };
 public:
 	TileMap(const std::string& textureId = "", const std::string& n = "");
 	virtual ~TileMap() override;
@@ -19,5 +21,6 @@ public:
 	bool Load(const std::string& filePath);
 
 	std::vector<Tile> tiles;
+	float TileSize();
 };
 

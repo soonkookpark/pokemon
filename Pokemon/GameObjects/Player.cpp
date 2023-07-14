@@ -3,6 +3,7 @@
 #include "InputMgr.h"
 #include "Framework.h"
 #include "ResourceMgr.h"
+#include "TileMap.h"
 void Player::Init()
 {
 	
@@ -27,49 +28,68 @@ void Player::Init()
 	SetOrigin(Origins::MC);
 
 
-	clipInfos.push_back({ "IdleS", "MoveS", false, Utils::Normalize({ -1.f, -1.f }) });
+	//clipInfos.push_back({ "IdleS", "MoveS", false, sf::Vector2f{direction.x,0 } });
 	clipInfos.push_back({ "IdleB", "MoveB", true, {0.f, -1.f} });
-	clipInfos.push_back({ "IdleS", "MoveS", true, Utils::Normalize({ 1.f, -1.f }) });
+	//clipInfos.push_back({ "IdleS", "MoveS", true, Utils::Normalize({ 1.f, -1.f }) });
 
 	clipInfos.push_back({ "IdleS", "MoveS", false, {-1.f, 0.f} });
 	clipInfos.push_back({ "IdleS", "MoveS", true, {1.f, 0.f} });
 
-	clipInfos.push_back({ "IdleS", "MoveS", false, Utils::Normalize({ -1.f, 1.f }) });
+	//clipInfos.push_back({ "IdleS", "MoveS", false, Utils::Normalize({ -1.f, 1.f }) });
 	clipInfos.push_back({ "IdleF", "MoveF", true,{0.f, 1.f} });
-	clipInfos.push_back({ "IdleS", "MoveS", true, Utils::Normalize({ 1.f, 1.f }) });
+	//clipInfos.push_back({ "IdleS", "MoveS", true, Utils::Normalize({ 1.f, 1.f }) });
 }
 
 void Player::Reset()
 {
 	animation.Play("IdleF");
 	SetOrigin(origin);
-	SetPosition({ 0, 0 });
+	SetPosition(charPos);
 	SetFlipX(false);
 
-	currentClipInfo = clipInfos[6];
+
+	currentClipInfo = clipInfos[3];
 }
 
 void Player::Update(float dt)
 {
-	//이동
+	/*if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left)) 
+	{
+		direction.x = -100.f;
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right))
+	{
+		direction.x = 100.f;
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up))
+	{
+		direction.y = 100.f;
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down))
+	{
+		direction.y = -100.f;
+	}*/
 	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
 	direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
+	position += direction*speed * dt;
+	SetPosition(position);
+	//이동
 	float magnitude = Utils::Magnitude(direction);
 	if (magnitude > 1.f)
 	{
 		direction /= magnitude;
 	}
 
-	position += direction * speed * dt;
-	SetPosition(position);
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::LShift))
-	{
-		speed *= 1.2f;
-	}
-	if (INPUT_MGR.GetKeyUp(sf::Keyboard::LShift))
-	{
-		speed /= 1.2f;
-	}
+	//position += direction * speed * dt;
+	//SetPosition(position);
+	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::LShift))
+	//{
+	//	speed *= 1.2f;
+	//}
+	//if (INPUT_MGR.GetKeyUp(sf::Keyboard::LShift))
+	//{
+	//	speed /= 1.2f;
+	//}
 	if (direction.x != 0.f || direction.y != 0.f)
 	{
 		auto min = std::min_element(clipInfos.begin(), clipInfos.end(),
@@ -91,11 +111,18 @@ void Player::Update(float dt)
 	}
 
 	animation.Update(dt);
+
+	//std::cout <<&tilemap->GetVertexArray()<< std::endl;
+	
+
+
+
 	//위치 파악
-	if (direction.x == 0.f && direction.y == 0.f)
+	/*if (direction.x == 0.f && direction.y == 0.f)
 	{
 		std::cout << GetPosition().x << ", " << GetPosition().y << std::endl;
-	}
+	}*/
+	//FRAMEWORK.GetWindowSize()
 }
 
 bool Player::GetFlipX() const
@@ -120,4 +147,14 @@ sf::Vector2f Player::GetDirection(int a)
 		return { 0,direction.y };
 	if (a == 3)
 		return { direction.x,direction.y };
+}
+
+void Player::SetWallBounds(const sf::FloatRect& bounds)
+{
+	sf::Vector2f halfSize = { sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2 };
+
+	wallBounds = bounds;
+
+	wallBoundsLT = { wallBounds.left + halfSize.x, wallBounds.top + halfSize.y };
+	wallBoundsRB = { wallBounds.left - halfSize.x + wallBounds.width, wallBounds.top - halfSize.y + wallBounds.height };
 }

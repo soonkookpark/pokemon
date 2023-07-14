@@ -2,6 +2,8 @@
 #include "SpriteGo.h"
 #include "AnimationController.h"
 #include "scene.h"
+
+class TileMap;
 class Player : public SpriteGo
 {
 public:
@@ -23,9 +25,17 @@ protected:
 	bool isGround = true;
 
 	std::vector<ClipInfo> clipInfos;
-	ClipInfo currentClipInfo;
 	std::string resourceListPath1;
+	ClipInfo currentClipInfo;
+	TileMap* tilemap;
+	sf::Vector2f charPos = { -2.5f * 150,19.5f * 150 };
+	sf::FloatRect wallBounds;
+	sf::Vector2f wallBoundsLT;
+	sf::Vector2f wallBoundsRB;
+
+	int tileScale = 0;
 public:
+	
 	Player(const std::string& textureId = "", const std::string& n = "")
 		: SpriteGo(textureId, n) {}
 	virtual ~Player() override { Release(); }
@@ -37,5 +47,6 @@ public:
 	bool GetFlipX() const;
 	void SetFlipX(bool filp);
 	sf::Vector2f GetDirection(int a);
+	void SetWallBounds(const sf::FloatRect& bounds);
 };
 

@@ -29,6 +29,7 @@ void SceneGame::Init() // 안바뀔거면 여기
 
 	player = (Player*)AddGo(new Player());
 	player->sortLayer = 1;
+	player->sprite.setScale(1.f, 1.f);
 	
 	
 	
@@ -87,6 +88,8 @@ void SceneGame::Init() // 안바뀔거면 여기
 
 	tileMap->Load("map/mapData.csv");
 	tileMap->SetOrigin(Origins::MC);
+	/*sf::VertexArray& vertexArray = tileMap->GetVertexArray();
+	std::cout <<tile*/
 }
 
 void SceneGame::Release()
@@ -121,27 +124,48 @@ void SceneGame::Exit()
 void SceneGame::Update(float dt)
 {
 	Scene::Update(dt);
+	
+	//test
+	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+
 	worldView.setCenter(player->GetPosition());
-	float position = 500 * dt;
-	/*SpriteGo* subject = (SpriteGo*)FindGo("Subject");*/
-	/*if ((player->GetDirection(3) == sf::Vector2f {0, 0})&& !battleNow)
-	{
-		moveSpeed = 500.f * dt;
-		if (subject->sprite.getPosition().x == player->GetPosition().x + (FRAMEWORK.GetWindowSize().x / 2));
-		{
-			battleNow = true;
-			moveSpeed = 0.f;
-		}
-	}
-	subject->sprite.setPosition(moveSpeed, 0);
+	//빡대가리야.
+	tileMap = (TileMap*)FindGo("Tile Map");
+	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / tileMap->TileSize()); // 플레이어가 속한 타일의 인덱스
+	int a= tileMap->tiles.size();
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
 	{
-		battleNow = false;
-	}*/
-
+		std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+		std::cout << a << std::endl;
+	}
+	
+	
 }
 
 void SceneGame::Draw(sf::RenderWindow& window)
 {
 	Scene::Draw(window);
 }
+
+
+//void SceneGame::CheckCollide()
+/* {
+	// 플레이어 포지션에 해당하는 타일 찾기 !!!!!!!!!!!
+	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 30.f); // 플레이어가 속한 타일의 인덱스
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
+		std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+	int tileSize = tileMap->tiles.size();
+	for (int i = 0; i < tileSize; i++)
+	{
+		if (tileMap->tiles[i].texIndex == 4)
+		{
+			continue;
+		}
+		if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) // 인덱스가 같으면
+		{
+			player->SetSpeed(0.f);
+			break;
+		}
+	}
+	// 해당하는 타일의 텍스인덱스가 4가 아니면 충돌처리
+}*/

@@ -160,3 +160,13 @@ void Scene::Draw(sf::RenderWindow& window)
 		}
 	}
 }
+
+void Scene::CheckBoundary()
+{
+	wallBounds = background->vertexArray.getBounds();
+	wallBounds.width -= tileWorldSize.x * 2.f;
+	wallBounds.height -= tileWorldSize.y * 2.f;
+	wallBounds.left += tileWorldSize.x;
+	wallBounds.top += tileWorldSize.y;
+}
+

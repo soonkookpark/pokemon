@@ -28,8 +28,7 @@ bool TileMap::Load(const std::string& filePath)
         }
     }
 
-    sf::Vector2f tileSize = { 150.f, 150.f };
-    sf::Vector2f texSize = { 150.f, 150.f };
+
     sf::Vector2f texOffsets[4] =
     {
         { 0.f, 0.f },
@@ -74,4 +73,11 @@ bool TileMap::Load(const std::string& filePath)
     }
 
     return true;
+
+    
+}
+
+float TileMap::TileSize()
+{
+    return tileSize.x;
 }
