@@ -8,6 +8,7 @@
 #include "Framework.h"
 #include "RectangleGo.h"
 #include "UIButton.h"
+#include "TileMap.h"
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
 {
@@ -28,6 +29,15 @@ void SceneGame::Init() // 안바뀔거면 여기
 
 	player = (Player*)AddGo(new Player());
 	player->sortLayer = 1;
+	
+	
+	
+	
+	
+	
+	
+	
+	//버튼
 	/*UIButton* button = (UIButton*)AddGo(new UIButton("graphics/button.png"));
 	button->SetOrigin(Origins::TR);
 	button->sortLayer = 100;
@@ -47,31 +57,36 @@ void SceneGame::Init() // 안바뀔거면 여기
 		std::cout << "Click" << std::endl;
 	};*/
 	
-	SpriteGo* BG = (SpriteGo*)AddGo(new SpriteGo("graphics/Park.png","Park"));
+	//배경이미지 생성 test
+	/*SpriteGo* BG = (SpriteGo*)AddGo(new SpriteGo("graphics/Park.png","Park"));
 	BG->sprite.setScale(10.f, 10.f);
 	BG->sortLayer = 0;
 	BG->SetOrigin(Origins::MC);
-	BG->SetPosition(0, 0);
+	BG->SetPosition(0, 0);*/
 	
-	SpriteGo* subject = (SpriteGo*)AddGo(new SpriteGo("graphics/chikorita.png", "Subject"));
-	/*subject->sprite.setPosition(-30, -30);*/
+	//포켓몬 생성해보기
+	/*SpriteGo* subject = (SpriteGo*)AddGo(new SpriteGo("graphics/chikorita.png", "Subject"));
+	subject->sprite.setPosition(-30, -30);
 	subject->SetOrigin(Origins::TR);
 	subject->sprite.setScale(1.0f, 1.0f);
-	/*subject->sprite.setFillColor(sf::Color::Magenta);*/
+	subject->sprite.setFillColor(sf::Color::Magenta);*/
 	
-	
-	//RectangleGo* ground = (RectangleGo*)AddGo(new RectangleGo(groundSize, "Ground"));
-	//ground->SetPosition(0, 0);
-	//ground->rectangle.setFillColor(sf::Color::Cyan);
-	//ground->SetOrigin(Origins::TC);
-	//groundBounds = ground->rectangle.getGlobalBounds();//
-	//groundBounds.height -= groundSize.y;
+	//사각형 생성
+	/*RectangleGo* ground = (RectangleGo*)AddGo(new RectangleGo(groundSize, "Ground"));
+	ground->SetPosition(0, 0);
+	ground->rectangle.setFillColor(sf::Color::Cyan);
+	ground->SetOrigin(Origins::TC);
+	groundBounds = ground->rectangle.getGlobalBounds();//
+	groundBounds.height -= groundSize.y;*/
+	tileMap = (TileMap*)AddGo(new TileMap("graphics/Resource.png", "Tile Map"));
 
-	//layer->SetGroundBounds(groundBounds);
 	for (auto go : gameObjects)
 	{
 		go->Init();
 	}
+
+	tileMap->Load("map/mapData.csv");
+	tileMap->SetOrigin(Origins::MC);
 }
 
 void SceneGame::Release()
@@ -94,8 +109,8 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 	uiView.setCenter(size * 0.5f);
 
 	Scene::Enter();
-	SpriteGo* subject = (SpriteGo*)FindGo("Subject");
-	subject->SetPosition(player->GetPosition().x - 180.f, player->GetPosition().y - 180.f);
+	/*SpriteGo* subject = (SpriteGo*)FindGo("Subject");
+	subject->SetPosition(player->GetPosition().x - 180.f, player->GetPosition().y - 180.f);*/
 }
 
 void SceneGame::Exit()
@@ -108,8 +123,8 @@ void SceneGame::Update(float dt)
 	Scene::Update(dt);
 	worldView.setCenter(player->GetPosition());
 	float position = 500 * dt;
-	SpriteGo* subject = (SpriteGo*)FindGo("Subject");
-	if ((player->GetDirection(3) == sf::Vector2f {0, 0})&& !battleNow)
+	/*SpriteGo* subject = (SpriteGo*)FindGo("Subject");*/
+	/*if ((player->GetDirection(3) == sf::Vector2f {0, 0})&& !battleNow)
 	{
 		moveSpeed = 500.f * dt;
 		if (subject->sprite.getPosition().x == player->GetPosition().x + (FRAMEWORK.GetWindowSize().x / 2));
@@ -122,7 +137,7 @@ void SceneGame::Update(float dt)
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
 	{
 		battleNow = false;
-	}
+	}*/
 
 }
 

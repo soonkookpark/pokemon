@@ -1,6 +1,8 @@
 #pragma once
 #include "Scene.h"
+
 class Player;
+class TileMap;
 class SceneGame : public Scene
 {
 protected:
@@ -8,6 +10,8 @@ protected:
 	Player* player;
 	bool battleNow = false;
 	float moveSpeed = 0.f;
+	TileMap* tileMap = nullptr;
+
 public:
 	SceneGame();
 	virtual ~SceneGame() override = default;

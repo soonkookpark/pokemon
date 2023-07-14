@@ -62,7 +62,14 @@ void Player::Update(float dt)
 
 	position += direction * speed * dt;
 	SetPosition(position);
-
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::LShift))
+	{
+		speed *= 1.2f;
+	}
+	if (INPUT_MGR.GetKeyUp(sf::Keyboard::LShift))
+	{
+		speed /= 1.2f;
+	}
 	if (direction.x != 0.f || direction.y != 0.f)
 	{
 		auto min = std::min_element(clipInfos.begin(), clipInfos.end(),

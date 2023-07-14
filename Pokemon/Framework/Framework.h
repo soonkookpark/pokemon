@@ -13,9 +13,9 @@ protected:
 	sf::RenderWindow window;
 	sf::Clock clock;
 
-	int screenWidth = 500;
-	int screenHeight = 500;
-	std::string title = "SFML Works!";
+	int screenWidth = 1920;
+	int screenHeight = 1080;
+	std::string title = "Pokemon - Gold";
 
 public:
 	virtual void Init(int width, int height, const std::string& title);
