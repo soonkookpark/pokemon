@@ -77,7 +77,12 @@ bool TileMap::Load(const std::string& filePath)
     
 }
 
-float TileMap::TileSize()
+sf::Vector2f TileMap::TileSize()
+{
+    return tileSize;
+}
+
+float TileMap::TileXSize()
 {
     return tileSize.x;
 }

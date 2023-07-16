@@ -21,6 +21,7 @@ public:
 	bool Load(const std::string& filePath);
 
 	std::vector<Tile> tiles;
-	float TileSize();
+	sf::Vector2f TileSize();
+	float TileXSize();
 };
 

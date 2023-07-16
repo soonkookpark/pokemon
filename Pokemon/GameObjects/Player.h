@@ -28,7 +28,7 @@ protected:
 	std::string resourceListPath1;
 	ClipInfo currentClipInfo;
 	TileMap* tilemap;
-	sf::Vector2f charPos = { -2.5f * 150,19.5f * 150 };
+	sf::Vector2f charPos = { 18.5*150,39.5*150 };
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;

@@ -155,6 +155,8 @@ void Player::SetWallBounds(const sf::FloatRect& bounds)
 
 	wallBounds = bounds;
 
-	wallBoundsLT = { wallBounds.left + halfSize.x, wallBounds.top + halfSize.y };
-	wallBoundsRB = { wallBounds.left - halfSize.x + wallBounds.width, wallBounds.top - halfSize.y + wallBounds.height };
+	wallBoundsLT = { wallBounds.left + halfSize.x,
+		wallBounds.top + halfSize.y };
+	wallBoundsRB = { wallBounds.left - halfSize.x + wallBounds.width,
+		wallBounds.top - halfSize.y + wallBounds.height };
 }

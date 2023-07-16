@@ -31,12 +31,21 @@ void SceneGame::Init() // 안바뀔거면 여기
 	player->sortLayer = 1;
 	player->sprite.setScale(1.f, 1.f);
 	
+	tileMap = (TileMap*)AddGo(new TileMap("graphics/Resource.png", "Tile Map"));
+	tileMap->Load("map/mapData.csv");
+	tileMap->SetOrigin(Origins::TL);
 	
 	
-	
-	
-	
-	
+	/*groundBounds = tileMap->vertexArray.getBounds();
+	groundBounds.width -= tileMap->TileSize().x * 2.f;
+	groundBounds.height -= tileMap->TileSize().y * 2.f;
+	groundBounds.left += tileMap->TileSize().x;
+	groundBounds.top += tileMap->TileSize().y;
+	std::cout << groundBounds.height <<","<<
+		groundBounds.left << "," <<
+		groundBounds.top << "," <<
+		groundBounds.width << std::endl;
+	player->SetWallBounds(groundBounds);*/
 	
 	//버튼
 	/*UIButton* button = (UIButton*)AddGo(new UIButton("graphics/button.png"));
@@ -79,15 +88,12 @@ void SceneGame::Init() // 안바뀔거면 여기
 	ground->SetOrigin(Origins::TC);
 	groundBounds = ground->rectangle.getGlobalBounds();//
 	groundBounds.height -= groundSize.y;*/
-	tileMap = (TileMap*)AddGo(new TileMap("graphics/Resource.png", "Tile Map"));
 
 	for (auto go : gameObjects)
 	{
 		go->Init();
 	}
 
-	tileMap->Load("map/mapData.csv");
-	tileMap->SetOrigin(Origins::MC);
 	/*sf::VertexArray& vertexArray = tileMap->GetVertexArray();
 	std::cout <<tile*/
 }
@@ -130,13 +136,14 @@ void SceneGame::Update(float dt)
 
 	worldView.setCenter(player->GetPosition());
 	//빡대가리야.
-	tileMap = (TileMap*)FindGo("Tile Map");
-	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / tileMap->TileSize()); // 플레이어가 속한 타일의 인덱스
-	int a= tileMap->tiles.size();
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
+	//tileMap = (TileMap*)FindGo("Tile Map");
+	//sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 40.f); // 플레이어가 속한 타일의 인덱스
+	//int a= tileMap->tiles.size();
+	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
 	{
-		std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
-		std::cout << a << std::endl;
+		/*std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+		std::cout << a << std::endl;*/
+		CheckCollide();
 	}
 	
 	
@@ -148,24 +155,40 @@ void SceneGame::Draw(sf::RenderWindow& window)
 }
 
 
-//void SceneGame::CheckCollide()
-/* {
-	// 플레이어 포지션에 해당하는 타일 찾기 !!!!!!!!!!!
-	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 30.f); // 플레이어가 속한 타일의 인덱스
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
-		std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
-	int tileSize = tileMap->tiles.size();
-	for (int i = 0; i < tileSize; i++)
+void SceneGame::CheckCollide()
+ {
+	 //플레이어 포지션에 해당하는 타일 찾기 !!!!!!!!!!!
+	tileMap = (TileMap*)FindGo("Tile Map");
+	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 150.f); // 플레이어가 속한 타일의 인덱스
+	//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
 	{
-		if (tileMap->tiles[i].texIndex == 4)
+		//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+		int tileSize = tileMap->tiles.size();
+		for (int i = 0; i < tileSize; i++)
 		{
-			continue;
-		}
-		if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) // 인덱스가 같으면
-		{
-			player->SetSpeed(0.f);
-			break;
+			//std::cout << tileMap->tiles[playerTileIndex.x].texIndex << std::endl;
+
+			//if (tileMap->tiles[i].texIndex == 30)
+			//{
+			//	std::cout << tileMap->tiles[i].x << std::endl;
+			//	std::cout << "안 부딪힘" << std::endl;
+			//	//continue;
+			//}
+			if (tileMap->tiles[i].x == playerTileIndex.x&&tileMap->tiles[i].y==playerTileIndex.y)
+			{
+				//std::cout << "타일: " << tileMap->tiles[i].x << "," << tileMap->tiles[i].y << std::endl << "플레이어" << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+				std::cout << tileMap->tiles[i].texIndex << std::endl;
+				
+			}
+			//if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) // 인덱스가 같으면
+			//{
+			//	std::cout << "부딪힘" << std::endl;
+			//	std::cout << tileMap->tiles[i].texIndex << std::endl;
+			//	//player->SetSpeed(0.f);
+			//	//break;
+			//}
 		}
 	}
-	// 해당하는 타일의 텍스인덱스가 4가 아니면 충돌처리
-}*/
+	 //해당하는 타일의 텍스인덱스가 4가 아니면 충돌처리
+}
