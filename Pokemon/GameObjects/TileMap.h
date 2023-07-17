@@ -23,5 +23,6 @@ public:
 	std::vector<Tile> tiles;
 	sf::Vector2f TileSize();
 	float TileXSize();
+	Tile& GetTile(int x, int y);
 };
 

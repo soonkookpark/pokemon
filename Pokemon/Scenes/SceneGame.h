@@ -7,10 +7,20 @@ class SceneGame : public Scene
 {
 protected:
 	sf::FloatRect groundBounds;
+	sf::FloatRect objectBounds;
 	Player* player;
 	bool battleNow = false;
 	float moveSpeed = 0.f;
 	TileMap* tileMap = nullptr;
+	//--------------------
+	float transitionSpeed = 100.f; // 화면 전환 속도 (픽셀 단위)
+
+	sf::Clock clock;
+	sf::Time elapsedTime;
+	bool transitionInProgress = false;
+	sf::Vector2f rectSize = { 1.0f, 1.0f };
+
+
 
 public:
 	SceneGame();
@@ -24,6 +34,7 @@ public:
 
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
-	void CheckCollide();
+	void CheckCollide(float dt);
+	void BattleStart(float dt);
 };
 

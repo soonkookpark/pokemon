@@ -86,3 +86,18 @@ float TileMap::TileXSize()
 {
     return tileSize.x;
 }
+
+Tile& TileMap::GetTile(int x, int y)
+{
+    
+    if (x >= 0 && x < 40 && y >= 0 && y < 40)
+    {
+        int index = y* 40 + x;
+        return tiles[index];
+    }
+    else
+    {
+        // 예외 처리: 인덱스가 올바르지 않은 경우
+        throw std::out_of_range("Tile index out of range");
+    }
+}

@@ -1,9 +1,10 @@
 #pragma once
 #include "SpriteGo.h"
 #include "AnimationController.h"
-#include "scene.h"
+#include "Scene.h"
 
 class TileMap;
+class SceneGame;
 class Player : public SpriteGo
 {
 public:
@@ -33,6 +34,10 @@ protected:
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
 
+	sf::FloatRect objBounds;
+	sf::Vector2f objBoundsLT;
+	sf::Vector2f objBOundsRB;
+	SceneGame* sceneGame;
 	int tileScale = 0;
 public:
 	
@@ -46,7 +51,10 @@ public:
 
 	bool GetFlipX() const;
 	void SetFlipX(bool filp);
-	sf::Vector2f GetDirection(int a);
+	sf::Vector2f GetDirection();
 	void SetWallBounds(const sf::FloatRect& bounds);
+	//void ObjBounds(const sf::FloatRect& bounds);
+	//void PlayerMoveCheck();
+	void SetSceneGame(SceneGame* scene) { sceneGame = scene; }
 };
 

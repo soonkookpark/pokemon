@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "Utils.h"
 #include "SceneGame.h"
 #include "SceneMgr.h"
 #include "InputMgr.h"
@@ -25,27 +26,52 @@ void SceneGame::Init() // 안바뀔거면 여기
 {
 	Release();
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
-	sf::Vector2f groundSize = { windowSize.x,windowSize.y/2 };
+	sf::Vector2f groundSize = { windowSize.x,windowSize.y / 2 };
 
-	player = (Player*)AddGo(new Player());
-	player->sortLayer = 1;
-	player->sprite.setScale(1.f, 1.f);
 	
 	tileMap = (TileMap*)AddGo(new TileMap("graphics/Resource.png", "Tile Map"));
 	tileMap->Load("map/mapData.csv");
 	tileMap->SetOrigin(Origins::TL);
 	
+	player = (Player*)AddGo(new Player());
+	player->SetSceneGame(this);
+	player->sortLayer = 1;
+	player->sprite.setScale(1.f, 1.f);
 	
-	/*groundBounds = tileMap->vertexArray.getBounds();
-	groundBounds.width -= tileMap->TileSize().x * 2.f;
-	groundBounds.height -= tileMap->TileSize().y * 2.f;
-	groundBounds.left += tileMap->TileSize().x;
-	groundBounds.top += tileMap->TileSize().y;
+	
+	groundBounds = tileMap->vertexArray.getBounds();
+	groundBounds.width -= (tileMap->TileSize().x * 2.f-150.f);
+	groundBounds.height -= (tileMap->TileSize().y * 2.f-150.f);
+	groundBounds.left += (tileMap->TileSize().x-75.f);
+	groundBounds.top += (tileMap->TileSize().y-75.f);
 	std::cout << groundBounds.height <<","<<
 		groundBounds.left << "," <<
 		groundBounds.top << "," <<
 		groundBounds.width << std::endl;
-	player->SetWallBounds(groundBounds);*/
+	player->SetWallBounds(groundBounds);
+
+	//gpt
+	RectangleGo* rect = (RectangleGo*)AddGo(new RectangleGo(rectSize,"FadeOut"));
+	transitionInProgress = false;
+	transitionSpeed = 50.0f;
+	//rect.setSize(sf::Vector2f(1.0f, 1.0f));
+	rect->rectangle.setFillColor(sf::Color::Black);
+	rect->SetOrigin(Origins::TL);
+	rect->SetPosition(sf::Vector2f(0.0f, 0.0f));
+	elapsedTime = sf::Time::Zero;
+
+
+
+
+
+
+
+	/*objectBounds = tileMap->vertexArray.getBounds();
+	objectBounds.width -= (tileMap->TileXSize() + 75.f);
+	objectBounds.height -= (tileMap->TileXSize() + 75.f);
+	groundBounds.left += (tileMap->TileXSize() + 75.f);
+	groundBounds.top += (tileMap->TileXSize() + 75.f);
+	player->ObjBounds(objectBounds);*/
 	
 	//버튼
 	/*UIButton* button = (UIButton*)AddGo(new UIButton("graphics/button.png"));
@@ -116,7 +142,7 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
-
+	elapsedTime = clock.restart();
 	Scene::Enter();
 	/*SpriteGo* subject = (SpriteGo*)FindGo("Subject");
 	subject->SetPosition(player->GetPosition().x - 180.f, player->GetPosition().y - 180.f);*/
@@ -133,19 +159,44 @@ void SceneGame::Update(float dt)
 	
 	//test
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	// test
 
-	worldView.setCenter(player->GetPosition());
-	//빡대가리야.
+
+	
+
+
+
 	//tileMap = (TileMap*)FindGo("Tile Map");
 	//sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 40.f); // 플레이어가 속한 타일의 인덱스
 	//int a= tileMap->tiles.size();
 	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
-	{
+
 		/*std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
 		std::cout << a << std::endl;*/
-		CheckCollide();
+		CheckCollide(dt);
+
+	worldView.setCenter(player->GetPosition());
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F1))
+	{
+		SCENE_MGR.ChangeScene(SceneId::Battle);
 	}
-	
+	tileMap = (TileMap*)FindGo("Tile Map");
+	//int randomNum = Utils::RandomRange(1, 100);
+	//sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 150.f);// 플레이어가 속한 타일의 인덱스
+	//int tileSize = tileMap->tiles.size();
+	/*for (int i = 0; i < tileSize; i++)
+	{
+		if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y)
+		{
+			int texIndex = static_cast<int>(tileMap->tiles[i].texIndex);
+			if (randomNum < 10 && (static_cast<int>(TileInformation::GrassHigh) ||
+				static_cast<int>(TileInformation::GrassHigh)))
+			{
+				BattleStart();
+			}
+		}
+	}*/
+
 	
 }
 
@@ -155,40 +206,97 @@ void SceneGame::Draw(sf::RenderWindow& window)
 }
 
 
-void SceneGame::CheckCollide()
+void SceneGame::CheckCollide(float dt)
  {
+
 	 //플레이어 포지션에 해당하는 타일 찾기 !!!!!!!!!!!
 	tileMap = (TileMap*)FindGo("Tile Map");
-	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 150.f); // 플레이어가 속한 타일의 인덱스
+	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 150.f);// 플레이어가 속한 타일의 인덱스
 	//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
+	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
 	{
 		//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
 		int tileSize = tileMap->tiles.size();
 		for (int i = 0; i < tileSize; i++)
 		{
-			//std::cout << tileMap->tiles[playerTileIndex.x].texIndex << std::endl;
-
-			//if (tileMap->tiles[i].texIndex == 30)
-			//{
-			//	std::cout << tileMap->tiles[i].x << std::endl;
-			//	std::cout << "안 부딪힘" << std::endl;
-			//	//continue;
-			//}
-			if (tileMap->tiles[i].x == playerTileIndex.x&&tileMap->tiles[i].y==playerTileIndex.y)
+			
+			if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y)
 			{
-				//std::cout << "타일: " << tileMap->tiles[i].x << "," << tileMap->tiles[i].y << std::endl << "플레이어" << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
-				std::cout << tileMap->tiles[i].texIndex << std::endl;
+				int texIndex = static_cast<int>(tileMap->tiles[i].texIndex);
+				if (texIndex != static_cast<int>(TileInformation::Grass) &&
+					texIndex != static_cast<int>(TileInformation::GrassFlowerHalf) &&
+					texIndex != static_cast<int>(TileInformation::GrassHigh) &&
+					texIndex != static_cast<int>(TileInformation::GrassLow) &&
+					texIndex != static_cast<int>(TileInformation::Floor) &&
+					texIndex != static_cast<int>(TileInformation::Carpet))
+				{
+					//std::cout << "여긴 바닥이 아니야" << std::endl;
+					if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
+					{
+						std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
+						(int)tileMap->tiles[i].texIndex;
+					}
+
+					if (player->GetDirection().x < 0)
+						player->SetPosition(playerTileIndex.x * 150.f + 150.f, player->GetPosition().y);
+					if (player->GetDirection().x > 0)
+						player->SetPosition(playerTileIndex.x * 150.f, player->GetPosition().y);
+					if (player->GetDirection().y < 0)
+						player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150 + 150);
+					if (player->GetDirection().y > 0)
+						player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150);
+					std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
+
+
+				}
+
+				if (texIndex == static_cast<int>(TileInformation::GrassHigh)||
+					texIndex == static_cast<int>(TileInformation::GrassLow))
+				{
+					int randomNum = Utils::RandomRange(1, 10000);
+					if (randomNum>=99)
+					{
+						std::cout << "배틀을 시작하지" << std::endl;
+						BattleStart(dt);
+
+					}
+				}
+				
+				/*if ((tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) != 30)
+				{*/
+				//}
 				
 			}
-			//if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) // 인덱스가 같으면
-			//{
-			//	std::cout << "부딪힘" << std::endl;
-			//	std::cout << tileMap->tiles[i].texIndex << std::endl;
-			//	//player->SetSpeed(0.f);
-			//	//break;
-			//}
 		}
 	}
 	 //해당하는 타일의 텍스인덱스가 4가 아니면 충돌처리
+}
+
+void SceneGame::BattleStart(float dt)
+{
+	RectangleGo* rect = (RectangleGo*)FindGo("FadeOut");
+	if (transitionInProgress)
+	{
+		// 사각형 크기 변경
+		float targetWidth = static_cast<float>(window.getSize().x);
+		float targetHeight = static_cast<float>(window.getSize().y);
+		float newWidth = rect->rectangle.getSize().x + transitionSpeed * dt;
+		float newHeight =rect->rectangle.getSize().y + transitionSpeed * dt;
+		rect->rectangle.setSize(sf::Vector2f(newWidth, newHeight));
+
+		// 가운데로 이동
+		float offsetX = (targetWidth - newWidth) / 2.0f;
+		float offsetY = (targetHeight - newHeight) / 2.0f;
+		rect->rectangle.setPosition(offsetX, offsetY);
+
+		// 전환 완료 처리
+		if (newWidth >= targetWidth && newHeight >= targetHeight)
+		{
+			transitionInProgress = false;
+			// 다음 씬으로 전환
+			SCENE_MGR.ChangeScene(SceneId::Battle);
+		}
+	}
+
+	//SCENE_MGR.ChangeScene(SceneId::Battle);
 }
