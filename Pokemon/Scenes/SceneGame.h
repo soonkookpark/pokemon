@@ -1,6 +1,6 @@
 #pragma once
 #include "Scene.h"
-
+#include "Framework.h"
 class Player;
 class TileMap;
 class SceneGame : public Scene
@@ -15,13 +15,25 @@ protected:
 	//--------------------
 	float transitionSpeed = 100.f; // 화면 전환 속도 (픽셀 단위)
 
-	sf::Clock clock;
-	sf::Time elapsedTime;
+	sf::Clock clock; // 효과 시간 ,전투준비시잔
+	sf::Clock sceneClock; // 신전환 타임
+	sf::Time battleWaitTime = sf::seconds(3.f);//전투 준비 시간
+	sf::Time sceneChangeTime = sf::seconds(2.f);//신전환 시간.
+	sf::Time magnitudeTime = sf::seconds(0.2f);
+	sf::Time appearTime = sf::seconds(2.f);
+
 	bool transitionInProgress = false;
-	sf::Vector2f rectSize = { 1.0f, 1.0f };
-
-
-
+	sf::Vector2f rectSize = { FRAMEWORK.GetWindowSize().x,FRAMEWORK.GetWindowSize().y };
+	int playerWidth = FRAMEWORK.GetWindowSize().x;
+	int playerHeight = FRAMEWORK.GetWindowSize().y;
+	int rectSnailSize = 10;
+	sf::Vector2f textPos = uiView.getSize();
+	int timer = 0.f;
+	float duration = 5.f;
+	float fadeOut = 2.f;
+	bool magnitudeScene = false;
+	int randomNum; //랜덤넘버
+	bool checkMonster = false;
 public:
 	SceneGame();
 	virtual ~SceneGame() override = default;
@@ -36,5 +48,6 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 	void CheckCollide(float dt);
 	void BattleStart(float dt);
+	void SceneChange(float dt);
 };
 

@@ -52,13 +52,12 @@ void SceneGame::Init() // 안바뀔거면 여기
 
 	//gpt
 	RectangleGo* rect = (RectangleGo*)AddGo(new RectangleGo(rectSize,"FadeOut"));
-	transitionInProgress = false;
-	transitionSpeed = 50.0f;
-	//rect.setSize(sf::Vector2f(1.0f, 1.0f));
-	rect->rectangle.setFillColor(sf::Color::Black);
-	rect->SetOrigin(Origins::TL);
-	rect->SetPosition(sf::Vector2f(0.0f, 0.0f));
-	elapsedTime = sf::Time::Zero;
+	
+	/*rect->rectangle.setFillColor(sf::Color::Black);
+	rect->SetOrigin(Origins::TL);*/
+	//rect->SetPosition(sf::Vector2f(0.0f, 0.0f));
+	//rect->rectangle.setSize({ 10.f, 10.f });
+	//elapsedTime = sf::Time::Zero;
 
 
 
@@ -142,8 +141,9 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
-	elapsedTime = clock.restart();
+	
 	Scene::Enter();
+	sceneClock.restart();
 	/*SpriteGo* subject = (SpriteGo*)FindGo("Subject");
 	subject->SetPosition(player->GetPosition().x - 180.f, player->GetPosition().y - 180.f);*/
 }
@@ -235,14 +235,16 @@ void SceneGame::CheckCollide(float dt)
 					{
 						std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
 						(int)tileMap->tiles[i].texIndex;
+						player->ChangePlayerMove(); 
+						battleNow = false;
 					}
 
 					if (player->GetDirection().x < 0)
-						player->SetPosition(playerTileIndex.x * 150.f + 150.f, player->GetPosition().y);
+						player->SetPosition(playerTileIndex.x * 150.f/* + 150.f*/, player->GetPosition().y);
 					if (player->GetDirection().x > 0)
 						player->SetPosition(playerTileIndex.x * 150.f, player->GetPosition().y);
 					if (player->GetDirection().y < 0)
-						player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150 + 150);
+						player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150 /*+ 150*/);
 					if (player->GetDirection().y > 0)
 						player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150);
 					std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
@@ -253,13 +255,52 @@ void SceneGame::CheckCollide(float dt)
 				if (texIndex == static_cast<int>(TileInformation::GrassHigh)||
 					texIndex == static_cast<int>(TileInformation::GrassLow))
 				{
-					int randomNum = Utils::RandomRange(1, 10000);
-					if (randomNum>=99)
+					if (appearTime < sceneClock.getElapsedTime()&&!checkMonster)
 					{
-						std::cout << "배틀을 시작하지" << std::endl;
-						BattleStart(dt);
-
+						randomNum = Utils::RandomRange(1, 100);
+						sceneClock.restart();
+						std::cout << randomNum << std::endl;
+						checkMonster = true;
 					}
+					else if(!battleNow)
+					{
+						checkMonster = false;
+					}
+					if (!battleNow&&randomNum>=10)
+					{
+						player->ChangePlayerMove();
+						std::cout << "배틀을 시작하지" << std::endl;
+						clock.restart();
+						battleNow = true;
+
+						std::cout << "이걸 했다." << std::endl;
+						//sceneClock.restart();
+					}
+					if(battleNow/*&&battleWaitTime < sceneClock.getElapsedTime()*/)
+					{
+						BattleStart(dt);
+						std::cout << "0여기 왔다." << std::endl;
+					}
+						
+					/*worldView.setRotation(180.f);*/
+
+					//if (!magnitudeScene && magnitudeTime < clock.getElapsedTime())
+					//{
+					//	worldView.setRotation(20.f);
+					//	//sf::sleep(sf::seconds(0.2f));
+					//	//std::cout << "2여기 왔다." << std::endl;
+					//}
+					//if (magnitudeScene && magnitudeTime < clock.getElapsedTime())
+					//{
+					//	worldView.setRotation(-20.f);
+					//	//sf::sleep(sf::seconds(0.2f));
+					//	//std::cout << "3여기 왔다." << std::endl;
+					//}
+					//
+					//worldView.setRotation(0.f);
+					//magnitudeScene = !magnitudeScene;
+
+
 				}
 				
 				/*if ((tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) != 30)
@@ -274,29 +315,71 @@ void SceneGame::CheckCollide(float dt)
 
 void SceneGame::BattleStart(float dt)
 {
-	RectangleGo* rect = (RectangleGo*)FindGo("FadeOut");
-	if (transitionInProgress)
+	//worldView.setRotation(100.f);
+	//std::cout << "5여기 왔다." << std::endl;
+	//
+	////sf::sleep(sf::seconds(5.2f));
+	////battleNow = true;
+	//
+	//std::cout << "1여기 왔다." << std::endl;
+	//sceneClock.restart();
+	//sf::Time testtime = sceneClock.getElapsedTime();
+	//{
+
+	//	std::cout << testtime.asSeconds() << std::endl;
+
+		//if (!magnitudeScene && magnitudeTime < clock.getElapsedTime())
+		//{
+		//	worldView.setRotation(20.f);
+		//	//sf::sleep(sf::seconds(0.2f));
+		//	std::cout << "2여기 왔다." << std::endl;
+		//}
+		//if (magnitudeScene && magnitudeTime < clock.getElapsedTime())
+		//{	worldView.setRotation(-20.f);
+		//	//sf::sleep(sf::seconds(0.2f));
+		//	std::cout << "3여기 왔다." << std::endl;
+		//}
+
+	//	worldView.setRotation(0.f);
+	//	magnitudeScene = !magnitudeScene;
+	//	//sf::sleep(sf::seconds(0.2f));
+	//	std::cout << "4여기 왔다." << std::endl;
+	//	
+	//
+	//
+	//std::cout << "탈출했다 여기 왔다." << std::endl;
+	SceneChange(dt);
+	if (sceneChangeTime < clock.getElapsedTime())
+		SCENE_MGR.ChangeScene(SceneId::Battle);
+
+
+
+
+	
+	//timer += dt;
+	/*if (duration - timer < 0.f)
 	{
-		// 사각형 크기 변경
-		float targetWidth = static_cast<float>(window.getSize().x);
-		float targetHeight = static_cast<float>(window.getSize().y);
-		float newWidth = rect->rectangle.getSize().x + transitionSpeed * dt;
-		float newHeight =rect->rectangle.getSize().y + transitionSpeed * dt;
-		rect->rectangle.setSize(sf::Vector2f(newWidth, newHeight));
 
-		// 가운데로 이동
-		float offsetX = (targetWidth - newWidth) / 2.0f;
-		float offsetY = (targetHeight - newHeight) / 2.0f;
-		rect->rectangle.setPosition(offsetX, offsetY);
-
-		// 전환 완료 처리
-		if (newWidth >= targetWidth && newHeight >= targetHeight)
-		{
-			transitionInProgress = false;
-			// 다음 씬으로 전환
-			SCENE_MGR.ChangeScene(SceneId::Battle);
-		}
-	}
-
+	}*/
 	//SCENE_MGR.ChangeScene(SceneId::Battle);
+}
+
+void SceneGame::SceneChange(float dt)
+{
+	timer += dt;
+
+	RectangleGo* rect = (RectangleGo*)FindGo("FadeOut");
+	rect->SetPosition(uiView.getSize());
+	rect->SetOrigin(Origins::MC);
+	rect->rectangle.setScale(rectSize);
+	sf::Color end = sf::Color::Transparent;
+	//sf::Color start2 = sf::Color::Black;
+	sf::Color start1 = sf::Color::Black;//{ 255,255,255,0 };
+
+	sf::Color color1 = Utils::Lerp(end, start1, duration - timer);//duration - timer<0 투명화
+
+	rect->rectangle.setFillColor(sf::Color::Color(color1));
+	
+	//transparency = true;
+
 }

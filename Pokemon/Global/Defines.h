@@ -44,6 +44,7 @@ enum class Dir
 enum class SceneId
 {
 	None = -1,
+	Title,
 	Game,
 	Battle,
 	Count,

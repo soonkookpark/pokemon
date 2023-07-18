@@ -39,6 +39,9 @@ protected:
 	sf::Vector2f objBOundsRB;
 	SceneGame* sceneGame;
 	int tileScale = 0;
+	bool playerCanMove = false;
+
+
 public:
 	
 	Player(const std::string& textureId = "", const std::string& n = "")
@@ -56,5 +59,7 @@ public:
 	//void ObjBounds(const sf::FloatRect& bounds);
 	//void PlayerMoveCheck();
 	void SetSceneGame(SceneGame* scene) { sceneGame = scene; }
+	bool ChangePlayerMove();
+	bool GetPlayerMove();
 };
 

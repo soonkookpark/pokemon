@@ -1,0 +1,8 @@
+ID,FPS,LOOPTYPE,,
+MonsterBallEffect,10,0,,
+,,,,
+TEXTURE_ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/MonsterBallEffect.png,0,0,52,56
+graphics/MonsterBallEffect.png,52,0,52,56
+graphics/MonsterBallEffect.png,0,56,52,56
+graphics/MonsterBallEffect.png,52,56,52,56
