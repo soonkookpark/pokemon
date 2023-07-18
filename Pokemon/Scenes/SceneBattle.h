@@ -1,9 +1,11 @@
 #pragma once
 #include "Scene.h"
 #include"Framework.h"
+#include "AnimationController.h"
 class SceneBattle : public Scene
 {
 protected:
+	AnimationController animation;
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::RectangleShape rect;
 	int enemySize = 56;
@@ -11,6 +13,12 @@ protected:
 	int userMosterSize = 48; // 유저 포켓몬 이미지
 	bool listMove = false;
 	bool userMove = false;
+	bool aniPlay = false;
+	sf::Clock clock;
+	sf::Time interfaceTime = sf::seconds(3.f);
+	sf::Vector2f healthBar = { 354.f,25.f };
+	sf::Vector2f effectSize = { 50.f,50.f };
+
 public:
 
 	SceneBattle();

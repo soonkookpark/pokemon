@@ -79,8 +79,19 @@ void Player::Update(float dt)
 	sf::Vector2f tilePosUp = { tilePos.x, tilePos.y -1.f};
 	sf::Vector2f tilePosDown = { tilePos.x, tilePos.y +1.f};
 	sf::Vector2f nextTileTextIndex;*/
-	direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
-	direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
+
+	if (!playerCanMove) 
+	{
+		speed = 500.f;
+		direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
+		direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
+	}
+	else if (playerCanMove)
+	{
+		direction.x = 0.f;
+		direction.y = 0.f;
+	}
+		
 	//¿Ãµø
 	//if (INPUT_MGR.GetAxis(Axis::Horizontal) || INPUT_MGR.GetAxis(Axis::Vertical))
 	//{
@@ -187,6 +198,18 @@ void Player::SetFlipX(bool filp)
 sf::Vector2f Player::GetDirection()
 {
 	return direction;
+}
+
+bool Player::GetPlayerMove()
+{
+	return playerCanMove;
+}
+
+bool Player::ChangePlayerMove()
+{
+	playerCanMove = !playerCanMove;
+
+	return playerCanMove;
 }
 
 void Player::SetWallBounds(const sf::FloatRect& bounds)
