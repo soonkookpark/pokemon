@@ -52,6 +52,7 @@ void SceneGame::Init() // 안바뀔거면 여기
 
 	//gpt
 	RectangleGo* rect = (RectangleGo*)AddGo(new RectangleGo(rectSize,"FadeOut"));
+
 	
 	/*rect->rectangle.setFillColor(sf::Color::Black);
 	rect->SetOrigin(Origins::TL);*/
@@ -134,7 +135,19 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
-	
+	if (playerPos != sf::Vector2f{18.5 * 150, 39.5 * 150})
+	{
+		player->SetPosition(playerPos);
+	}
+	if (playerPos == sf::Vector2f{0, 0})
+	{
+		player->SetPosition({ 18.5 * 150, 39.5 * 150 });
+	}
+	RectangleGo* rect = (RectangleGo*)FindGo("FadeOut");
+	rect->SetPosition(uiView.getSize());
+	rect->SetOrigin(Origins::MC);
+	rect->rectangle.setScale(rectSize);
+	rect->rectangle.setFillColor(sf::Color::Transparent);
 	Scene::Enter();
 	sceneClock.restart();
 	/*SpriteGo* subject = (SpriteGo*)FindGo("Subject");
@@ -143,6 +156,8 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 
 void SceneGame::Exit()
 {
+
+	playerPos = player->GetPosition();
 	Scene::Exit();
 }
 

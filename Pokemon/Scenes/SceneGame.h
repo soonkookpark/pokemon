@@ -9,6 +9,7 @@ protected:
 	sf::FloatRect groundBounds;
 	sf::FloatRect objectBounds;
 	Player* player;
+	
 	bool battleNow = false;
 	float moveSpeed = 0.f;
 	TileMap* tileMap = nullptr;
@@ -34,6 +35,7 @@ protected:
 	bool magnitudeScene = false;
 	int randomNum; //·£´ý³Ñ¹ö
 	bool checkMonster = false;
+	sf::Vector2f playerPos;
 public:
 	SceneGame();
 	virtual ~SceneGame() override = default;

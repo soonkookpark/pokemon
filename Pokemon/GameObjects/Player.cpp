@@ -46,7 +46,7 @@ void Player::Reset()
 {
 	animation.Play("IdleF");
 	SetOrigin(origin);
-	SetPosition(charPos);
+	//SetPosition(charPos);
 	SetFlipX(false);
 
 

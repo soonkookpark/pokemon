@@ -22,6 +22,7 @@ protected:
 	bool menuDisplay = false;
 	bool trigger1 = false;
 	bool trigger2 = false;
+	bool gameEnd = false;
 	sf::Clock clock;
 	sf::Clock clock2;
 	sf::Time interfaceTime = sf::seconds(3.f);
@@ -32,7 +33,9 @@ protected:
 	int menuIndex = 0;
 	int skillIndex = 0;
 	float damage = 150.f;
-
+	int randomNum = 0; //= Utils::RandomRange(1, 100);
+	int iNum = 0;
+	int jNum = 0;
 public:
 
 	SceneBattle();

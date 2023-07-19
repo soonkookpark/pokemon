@@ -46,6 +46,7 @@ void SceneBattle::Init()
 	effectBall->sprite.setPosition(267, 530);
 	effectBall->sprite.setScale(3.f, 3.f);
 	effectBall->sortLayer = 204;
+
 	AddGo(new TextGo("menuMessage1", "fonts/DOSPilgi.ttf"));
 	AddGo(new TextGo("menuMessage2", "fonts/DOSPilgi.ttf"));
 	AddGo(new TextGo("menuMessage3", "fonts/DOSPilgi.ttf"));
@@ -80,14 +81,20 @@ void SceneBattle::Release()
 
 void SceneBattle::Enter()
 {
-	if (listMove)
-	{
-		listMove = false;
-	}
-	if (userMove)
-	{
-		userMove = false;
-	}
+	
+	/*TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
+	TextGo* SkillMessage2 = (TextGo*)FindGo("SkillMessage2");
+	TextGo* SkillMessage3 = (TextGo*)FindGo("SkillMessage3");
+	TextGo* SkillMessage4 = (TextGo*)FindGo("SkillMessage4");
+	TextGo* SkillExplain = (TextGo*)FindGo("SkillExplain");
+	TextGo* SkillText = (TextGo*)FindGo("SkillText");
+	SkillMessage1->SetActive(false);
+	SkillMessage2->SetActive(false);
+	SkillMessage3->SetActive(false);
+	SkillMessage4->SetActive(false);
+	SkillExplain->SetActive(false);
+	SkillText->SetActive(false);*/
+
 	auto size = FRAMEWORK.GetWindowSize();
 	//auto centerPos = size / 2.f;
 	worldView.setSize(size);
@@ -96,6 +103,16 @@ void SceneBattle::Enter()
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
 	Scene::Enter();
+	
+	
+	
+	listMove = false;
+	userMove = false;
+	trigger1 = false;
+	trigger2 = false;
+	menuDisplay = false;
+	menuIndex = 0;
+	skillIndex = 0;
 	RectangleGo* recgo = (RectangleGo*)FindGo("square");
 	recgo->rectangle.setFillColor({248,248,248});
 	recgo->SetOrigin(Origins::MC);
@@ -105,11 +122,21 @@ void SceneBattle::Enter()
 	//상대 이미지는 56,56
 	//내 이미지는 48,48
 	SpriteGo* list = (SpriteGo*)FindGo("List");
-	sf::IntRect monsterImageRect(1, 18, enemySize, enemySize);
+	randomNum = Utils::RandomRange(1, 100);
+	iNum = randomNum % 30;
+	jNum = randomNum % 25;
+
+	SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
+	effectBall->SetActive(true);
+
+
+
+	sf::IntRect monsterImageRect(1+(57*iNum), 18+(188*jNum), enemySize, enemySize);
 	list->sprite.setTextureRect(monsterImageRect);
-	list->sprite.setPosition(-size.x/2, -size.y/2);
+	list->sprite.setPosition(0,0);
 	list->SetOrigin(Origins::TL);
 	list->sprite.setScale(8.5f, 8.5f);
+	list->sortLayer = 204;
 
 	//내 몬스터
 	SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
@@ -127,6 +154,7 @@ void SceneBattle::Enter()
 	user->sprite.setPosition(size.x / 2, 150);
 	user->SetOrigin(Origins::BR);
 	user->sprite.setScale(8.5f, 8.5f);
+	//user->SetActive(true);
 	clock.restart();
 	
 
@@ -147,170 +175,214 @@ void SceneBattle::Enter()
 	select->SetPosition(100, 100);
 	select->sprite.setScale(10.f, 10.f);*/
 	
-	
+	healthBar = { 3.54f * 100,25.f };
 	RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
 	pokemonHealth->SetOrigin(Origins::TL);
 	pokemonHealth->rectangle.setPosition(452, 111);
+	pokemonHealth->rectangle.setSize(healthBar);
 	pokemonHealth->rectangle.setFillColor(sf::Color::Green);
 	pokemonHealth->sortLayer = 203;
 	pokemonHealth->SetActive(false);
 	
 	
+	
+	gameEnd = false;
 }
 
 void SceneBattle::Exit()
 {
 	Scene::Exit();
+	listMove = false;
+	userMove = false;
+	trigger1 = false;
+	trigger2 = false;
+	aniPlay = false;
+	menuDisplay = false;
+	menuIndex = 0;
+	skillIndex = 0;
+	SpriteGo* user = (SpriteGo*)FindGo("User");
+	user->SetActive(false);
+	SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
+	mymonster->SetActive(false);
+	SpriteGo* select = (SpriteGo*)FindGo("Select");
+	select->SetActive(false);
+	SpriteGo* menu = (SpriteGo*)FindGo("Menu");
+	menu->SetActive(false);
+	SpriteGo* explainMenu = (SpriteGo*)FindGo("ExplainMenu");
+	explainMenu->SetActive(false);
+	TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
+	TextGo* SkillMessage2 = (TextGo*)FindGo("SkillMessage2");
+	TextGo* SkillMessage3 = (TextGo*)FindGo("SkillMessage3");
+	TextGo* SkillMessage4 = (TextGo*)FindGo("SkillMessage4");
+	TextGo* SkillExplain = (TextGo*)FindGo("SkillExplain");
+	TextGo* SkillText = (TextGo*)FindGo("SkillText");
+	SkillMessage1->SetActive(false);
+	SkillMessage2->SetActive(false);
+	SkillMessage3->SetActive(false);
+	SkillMessage4->SetActive(false);
+	SkillExplain->SetActive(false);
+	SkillText->SetActive(false);
+
+
 }
 
 void SceneBattle::Update(float dt)
 {
-	//std::cout << menuIndex << std::endl;
-	//test code
+	Scene::Update(dt);
 	sf::Vector2f mousePos = INPUT_MGR.GetMousePos(); //마우스 위치
 	sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrScene()->ScreenToWorldPos(mousePos);
+	if (!gameEnd) 
+	{
 
-	SpriteGo* list = (SpriteGo*)FindGo("List");
-	list->SetOrigin(Origins::TR);
-	SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
-	SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
-	SpriteGo* user = (SpriteGo*)FindGo("User");
-	SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
-	//SpriteGo* list = (SpriteGo*)FindGo("List");
-	user->SetOrigin(Origins::BL);
-	if (!listMove) //처음 몬스터 이미지 움직임
-	{
-		list->sprite.move(4.f, 0);
-		clock.restart();
-	}
-	if (list->sprite.getPosition().x == windowSize.x/2)
-	{
-		list->sprite.move(0.f, 0.f);
-		//list->SetPosition()
-		listMove = true;
-	}
+		//std::cout << menuIndex << std::endl;
+		//test code
 
-	if (!userMove) 
-	{
-		user->sprite.move(-4.f, 0.f);
-	}
-	if (user->sprite.getPosition().x == -windowSize.x / 2)
-	{
-		user->sprite.move(0.f, 0.f);
-		//list->SetPosition()
-		userMove = true;
-		
-	}
-	if (listMove)
-	{
-		RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
-		SpriteGo* realHpBar = (SpriteGo*)FindGo("RealHpBar");
-		
-		pokemonHealth->SetActive(true);
-		realHpBar->SetActive(true);
-		HpBar->SetActive(true);
-	}
-	//if (clock.getElapsedTime() > interfaceTime)
-	{
-		if (userMove&&INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
+		SpriteGo* list = (SpriteGo*)FindGo("List");
+		list->SetOrigin(Origins::TR);
+		SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
+		SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
+		SpriteGo* user = (SpriteGo*)FindGo("User");
+		SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
+		//SpriteGo* list = (SpriteGo*)FindGo("List");
+		user->SetOrigin(Origins::BL);
+		if (!listMove) //처음 몬스터 이미지 움직임
 		{
-			userMove = false;
-			//user->sprite.move(-5.f, 0.f);
-			//user->SetActive(false);
+			list->sprite.move(4.f, 0);
+			clock.restart();
 		}
-	}
-	/*std::cout << user->sprite.getPosition().x << std::endl;
-	std::cout << -windowSize.x << std::endl;*/
-	if (user->GetActive() && user->sprite.getPosition().x <= -windowSize.x)
-	{
-		user->SetActive(false);
-	}
-	if (!user->GetActive()&&!aniPlay)
-	{
-		animation.Play("MonsterBallEffect");
-		
-		std::cout << "실행했다." << std::endl;
-		aniPlay = true;
-		clock.restart();
-	}
+		if (list->sprite.getPosition().x == windowSize.x)
+		{
+			list->sprite.move(0.f, 0.f);
+			//list->SetPosition()
+			listMove = true;
+		}
 
-	if (aniPlay && clock.getElapsedTime() > sf::seconds(0.4f))
-	{
-		effectBall->SetActive(false);
-	}
-	if (!effectBall->GetActive())
-	{
-		mymonster->SetActive(true);
-	}
-	if (mymonster->GetActive())
-	{
-		Battle(dt);
-		if (!trigger1) 
+		if (!userMove)
 		{
-			MoveCursorMenu();
+			user->sprite.move(-4.f, 0.f);
 		}
-		if (trigger1)
+		if (user->sprite.getPosition().x == -windowSize.x / 2)
 		{
-			SelectMenu();
+			user->sprite.move(0.f, 0.f);
+			//list->SetPosition()
+			userMove = true;
+
 		}
-		if(!trigger2)
+		if (listMove)
 		{
-			MoveCursorSkill();
-			clock2.restart();
-		}
-		if (trigger2&& (clock2.getElapsedTime() > sf::seconds(0.5f)))
-		{
-			std::cout << "적체력깎음" << std::endl;
-			
-			if (healthBar.x <= 0)
-			{
-				damage = 0;
-			}
-			healthBar.x -= damage*dt;
 			RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
-			pokemonHealth->rectangle.setSize(healthBar);
-			if (healthBar.x < 265 &&
-				healthBar.x > 106)
-			{
-				pokemonHealth->rectangle.setFillColor(sf::Color::Yellow);
-			}
-			else if (healthBar.x < 106&&
-				healthBar.x > 0)
-			{
-				pokemonHealth->rectangle.setFillColor(sf::Color::Red);
-			}
-			else if (healthBar.x <= 0)
-			{
-				healthBar.x = 0;
-				damage = 0;
-				
-				list->sprite.move(0.f, 5.f);
-				
-			}
-			
+			SpriteGo* realHpBar = (SpriteGo*)FindGo("RealHpBar");
 
-
+			pokemonHealth->SetActive(true);
+			realHpBar->SetActive(true);
+			HpBar->SetActive(true);
 		}
-		if (list->sprite.getPosition().y > windowSize.y)
+		//if (clock.getElapsedTime() > interfaceTime)
 		{
-			SCENE_MGR.ChangeScene(SceneId::Game);
+			if (userMove && INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
+			{
+				userMove = false;
+				//user->sprite.move(-5.f, 0.f);
+				//user->SetActive(false);
+			}
 		}
+		/*std::cout << user->sprite.getPosition().x << std::endl;
+		std::cout << -windowSize.x << std::endl;*/
+		if (user->GetActive() && user->sprite.getPosition().x <= -windowSize.x)
+		{
+			user->SetActive(false);
+		}
+		if (!user->GetActive() && !aniPlay)
+		{
+			animation.Play("MonsterBallEffect");
+
+			std::cout << "실행했다." << std::endl;
+			aniPlay = true;
+			clock.restart();
+		}
+
+		if (aniPlay && clock.getElapsedTime() > sf::seconds(0.4f))
+		{
+			effectBall->SetActive(false);
+		}
+		if (!effectBall->GetActive())
+		{
+			mymonster->SetActive(true);
+		}
+		if (mymonster->GetActive())
+		{
+			Battle(dt);
+			if (!trigger1)
+			{
+				MoveCursorMenu();
+			}
+			if (trigger1)
+			{
+				SelectMenu();
+			}
+			if (!trigger2)
+			{
+				MoveCursorSkill();
+				clock2.restart();
+			}
+			if (trigger2 && (clock2.getElapsedTime() > sf::seconds(0.5f)))
+			{
+				std::cout << "적체력깎음" << std::endl;
+
+				if (healthBar.x <= 0)
+				{
+					damage = 0;
+				}
+				else {
+					damage = 150;
+				}
+				healthBar.x -= damage * dt;
+				RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
+				pokemonHealth->rectangle.setSize(healthBar);
+				if (healthBar.x < 265 &&
+					healthBar.x > 106)
+				{
+					pokemonHealth->rectangle.setFillColor({ 234,157,40 });
+				}
+				else if (healthBar.x < 106 &&
+					healthBar.x > 0)
+				{
+					pokemonHealth->rectangle.setFillColor(sf::Color::Red);
+				}
+				else if (healthBar.x <= 0)
+				{
+					healthBar.x = 0;
+					//damage = 0;
+
+					list->sprite.move(0.f, 5.f);
+					if (list->sprite.getPosition().y > windowSize.y)
+					{
+						SCENE_MGR.ChangeScene(SceneId::Game);
+						gameEnd = true;
+					}
+
+				}
+
+
+
+			}
+		}
+
+
+		
 	}
 	animation.Update(dt);
-
-	Scene::Update(dt);
-	
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F2))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Game);
 	}
-
 
 	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
 	{
 		std::cout << mousePos.x << "," << mousePos.y << std::endl;
 	}
 	//MoveCursorMenu();
+
 }
 
 void SceneBattle::Draw(sf::RenderWindow& window)
@@ -512,10 +584,10 @@ void SceneBattle::SelectMenu()
 			
 			break;
 		case (int)Menu::Bag:
-			//SkillSelect();
+			SkillSelect();
 			break;
 		case (int)Menu::Pokemon:
-			//SelectPokemon();
+			SkillSelect();
 			break;
 		case (int)Menu::Run:
 			BattleEnd();
@@ -627,6 +699,7 @@ void SceneBattle::SkillExplain(int n)
 	skillExplain->SetOrigin(Origins::TL);
 	skillExplain->SetPosition(973,678);
 	skillExplain->sortLayer = 212;
+	skillExplain->SetActive(menu->GetActive());
 	switch (n)
 	{
 	case 0:
@@ -649,7 +722,7 @@ void SceneBattle::SkillExplain(int n)
 	skillText->SetOrigin(Origins::TL);
 	skillText->SetPosition(973,837);
 	skillText->sortLayer = 212;
-	
+	skillText->SetActive(true);
 	
 	
 }
