@@ -26,18 +26,20 @@ void SceneBattle::Init()
 	AddGo(new SpriteGo("graphics/PokemonList.png", "List"));
 	AddGo(new SpriteGo("graphics/PokemonList.png", "myMonster"));
 	AddGo(new SpriteGo("graphics/User.png", "User"));
+	AddGo(new SpriteGo("graphics/selectIcon.Png", "Select"));
 	SpriteGo* HpBar= (SpriteGo*)AddGo(new SpriteGo("graphics/HpBar.png", "HpBar"));
 	SpriteGo* RealHpBar = (SpriteGo*)AddGo(new SpriteGo("graphics/RealHpBar.png", "RealHpBar"));
 	HpBar->sprite.setScale(0.f, 0.f);
 	RealHpBar->sprite.setScale(0.f, 0.f);
 	AddGo(new RectangleGo(healthBar, "healthBar"));
 	//std::cout<<rect.getPosition().x << std::endl;
-	
-	
+	//몬스터볼 연출 효과
 	SpriteGo* effectBall = (SpriteGo*)AddGo(new SpriteGo("","Effect"));
 	effectBall->sprite.setPosition(267, 530);
 	effectBall->sprite.setScale(3.f, 3.f);
 	effectBall->sortLayer = 204;
+
+	//메뉴 내 사각형 아이콘
 
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/MonsterBallEffect.csv"));
 	animation.SetTarget(&effectBall->sprite);
@@ -292,7 +294,20 @@ void SceneBattle::Battle(float dt)
 	timer += dt;
 	int turn = 0;
 	RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
+	PlayerMenu();
 //	pokemonHealth
+}
+
+void SceneBattle::PlayerMenu()
+{
+	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
+	selectIcon->sprite.setScale(10.f, 10.f);
+	selectIcon->SetPosition(windowSize.x / 2,windowSize.y/2);
+	//switch()
+}
+
+void SceneBattle::SkillSelect()
+{
 }
 
 void SceneBattle::BattleEnd()

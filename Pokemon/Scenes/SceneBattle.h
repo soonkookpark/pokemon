@@ -34,6 +34,9 @@ public:
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
 	void Battle(float dt);
+	void PlayerMenu();
+	void SkillSelect();
+	//void Bag();
 	void BattleEnd();
 };
 

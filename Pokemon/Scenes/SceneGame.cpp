@@ -58,13 +58,6 @@ void SceneGame::Init() // 안바뀔거면 여기
 	//rect->SetPosition(sf::Vector2f(0.0f, 0.0f));
 	//rect->rectangle.setSize({ 10.f, 10.f });
 	//elapsedTime = sf::Time::Zero;
-
-
-
-
-
-
-
 	/*objectBounds = tileMap->vertexArray.getBounds();
 	objectBounds.width -= (tileMap->TileXSize() + 75.f);
 	objectBounds.height -= (tileMap->TileXSize() + 75.f);
@@ -171,9 +164,9 @@ void SceneGame::Update(float dt)
 	//int a= tileMap->tiles.size();
 	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Return))
 
-		/*std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
-		std::cout << a << std::endl;*/
-		CheckCollide(dt);
+	/*std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+	std::cout << a << std::endl;*/
+	CheckCollide(dt);
 
 	worldView.setCenter(player->GetPosition());
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F1))
@@ -205,112 +198,110 @@ void SceneGame::Draw(sf::RenderWindow& window)
 	Scene::Draw(window);
 }
 
-
 void SceneGame::CheckCollide(float dt)
  {
 
-	 //플레이어 포지션에 해당하는 타일 찾기 !!!!!!!!!!!
 	tileMap = (TileMap*)FindGo("Tile Map");
+	//플레이어 포지션에 해당하는 타일 찾기 !!!!!!!!!!!
 	sf::Vector2i playerTileIndex = (sf::Vector2i)(player->GetPosition() / 150.f);// 플레이어가 속한 타일의 인덱스
 	//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
 	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
+	
+	//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
+	int tileSize = tileMap->tiles.size();
+	for (int i = 0; i < tileSize; i++)
 	{
-		//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
-		int tileSize = tileMap->tiles.size();
-		for (int i = 0; i < tileSize; i++)
-		{
 			
-			if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y)
+		if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y)
+		{
+			int texIndex = static_cast<int>(tileMap->tiles[i].texIndex);
+			if (texIndex != static_cast<int>(TileInformation::Grass) &&
+				texIndex != static_cast<int>(TileInformation::GrassFlowerHalf) &&
+				texIndex != static_cast<int>(TileInformation::GrassHigh) &&
+				texIndex != static_cast<int>(TileInformation::GrassLow) &&
+				texIndex != static_cast<int>(TileInformation::Floor) &&
+				texIndex != static_cast<int>(TileInformation::Carpet))
 			{
-				int texIndex = static_cast<int>(tileMap->tiles[i].texIndex);
-				if (texIndex != static_cast<int>(TileInformation::Grass) &&
-					texIndex != static_cast<int>(TileInformation::GrassFlowerHalf) &&
-					texIndex != static_cast<int>(TileInformation::GrassHigh) &&
-					texIndex != static_cast<int>(TileInformation::GrassLow) &&
-					texIndex != static_cast<int>(TileInformation::Floor) &&
-					texIndex != static_cast<int>(TileInformation::Carpet))
+				//std::cout << "여긴 바닥이 아니야" << std::endl;
+				if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
 				{
-					//std::cout << "여긴 바닥이 아니야" << std::endl;
-					if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
-					{
-						std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
-						(int)tileMap->tiles[i].texIndex;
-						player->ChangePlayerMove(); 
-						battleNow = false;
-					}
-
-					if (player->GetDirection().x < 0)
-						player->SetPosition(playerTileIndex.x * 150.f/* + 150.f*/, player->GetPosition().y);
-					if (player->GetDirection().x > 0)
-						player->SetPosition(playerTileIndex.x * 150.f, player->GetPosition().y);
-					if (player->GetDirection().y < 0)
-						player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150 /*+ 150*/);
-					if (player->GetDirection().y > 0)
-						player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150);
 					std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
-
-
+					(int)tileMap->tiles[i].texIndex;
+					player->ChangePlayerMove(); 
+					battleNow = false;
 				}
 
-				if (texIndex == static_cast<int>(TileInformation::GrassHigh)||
-					texIndex == static_cast<int>(TileInformation::GrassLow))
-				{
-					if (appearTime < sceneClock.getElapsedTime()&&!checkMonster)
-					{
-						randomNum = Utils::RandomRange(1, 100);
-						sceneClock.restart();
-						std::cout << randomNum << std::endl;
-						checkMonster = true;
-					}
-					else if(!battleNow)
-					{
-						checkMonster = false;
-					}
-					if (!battleNow&&randomNum>=10)
-					{
-						player->ChangePlayerMove();
-						std::cout << "배틀을 시작하지" << std::endl;
-						clock.restart();
-						battleNow = true;
-
-						std::cout << "이걸 했다." << std::endl;
-						//sceneClock.restart();
-					}
-					if(battleNow/*&&battleWaitTime < sceneClock.getElapsedTime()*/)
-					{
-						BattleStart(dt);
-						std::cout << "0여기 왔다." << std::endl;
-					}
-						
-					/*worldView.setRotation(180.f);*/
-
-					//if (!magnitudeScene && magnitudeTime < clock.getElapsedTime())
-					//{
-					//	worldView.setRotation(20.f);
-					//	//sf::sleep(sf::seconds(0.2f));
-					//	//std::cout << "2여기 왔다." << std::endl;
-					//}
-					//if (magnitudeScene && magnitudeTime < clock.getElapsedTime())
-					//{
-					//	worldView.setRotation(-20.f);
-					//	//sf::sleep(sf::seconds(0.2f));
-					//	//std::cout << "3여기 왔다." << std::endl;
-					//}
-					//
-					//worldView.setRotation(0.f);
-					//magnitudeScene = !magnitudeScene;
+				if (player->GetDirection().x < 0)
+					player->SetPosition(playerTileIndex.x * 150.f/* + 150.f*/, player->GetPosition().y);
+				if (player->GetDirection().x > 0)
+					player->SetPosition(playerTileIndex.x * 150.f, player->GetPosition().y);
+				if (player->GetDirection().y < 0)
+					player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150 /*+ 150*/);
+				if (player->GetDirection().y > 0)
+					player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150);
+				std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
 
 
-				}
-				
-				/*if ((tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) != 30)
-				{*/
-				//}
-				
 			}
+
+			if (texIndex == static_cast<int>(TileInformation::GrassHigh)||
+				texIndex == static_cast<int>(TileInformation::GrassLow))
+			{
+				if (appearTime < sceneClock.getElapsedTime()&&!checkMonster)
+				{
+					randomNum = Utils::RandomRange(1, 100);
+					sceneClock.restart();
+					std::cout << randomNum << std::endl;
+					checkMonster = true;
+				}
+				else if(!battleNow)
+				{
+					checkMonster = false;
+				}
+				if (!battleNow&&randomNum>=80)
+				{
+					player->ChangePlayerMove();
+					std::cout << "배틀을 시작하지" << std::endl;
+					clock.restart();
+					battleNow = true;
+
+					std::cout << "이걸 했다." << std::endl;
+					//sceneClock.restart();
+				}
+				if(battleNow/*&&battleWaitTime < sceneClock.getElapsedTime()*/)
+				{
+					BattleStart(dt);
+					std::cout << "0여기 왔다." << std::endl;
+				}
+						
+				/*worldView.setRotation(180.f);*/
+
+				//if (!magnitudeScene && magnitudeTime < clock.getElapsedTime())
+				//{
+				//	worldView.setRotation(20.f);
+				//	//sf::sleep(sf::seconds(0.2f));
+				//	//std::cout << "2여기 왔다." << std::endl;
+				//}
+				//if (magnitudeScene && magnitudeTime < clock.getElapsedTime())
+				//{
+				//	worldView.setRotation(-20.f);
+				//	//sf::sleep(sf::seconds(0.2f));
+				//	//std::cout << "3여기 왔다." << std::endl;
+				//}
+				//
+				//worldView.setRotation(0.f);
+				//magnitudeScene = !magnitudeScene;
+
+
+			}
+				
+			/*if ((tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) != 30)
+			{*/
+			//}
+				
 		}
 	}
-	 //해당하는 타일의 텍스인덱스가 4가 아니면 충돌처리
+	
 }
 
 void SceneGame::BattleStart(float dt)
