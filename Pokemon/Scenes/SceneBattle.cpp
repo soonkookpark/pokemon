@@ -7,6 +7,9 @@
 #include "GameObject.h"
 #include "RectangleGo.h"
 #include "SpriteGo.h"
+#include "TextGo.h"
+#include "StringTable.h"
+#include "DataTableMgr.h"
 
 SceneBattle::SceneBattle() : Scene(SceneId::Battle)
 {
@@ -26,19 +29,34 @@ void SceneBattle::Init()
 	AddGo(new SpriteGo("graphics/PokemonList.png", "List"));
 	AddGo(new SpriteGo("graphics/PokemonList.png", "myMonster"));
 	AddGo(new SpriteGo("graphics/User.png", "User"));
-	AddGo(new SpriteGo("graphics/selectIcon.Png", "Select"));
 	SpriteGo* HpBar= (SpriteGo*)AddGo(new SpriteGo("graphics/HpBar.png", "HpBar"));
 	SpriteGo* RealHpBar = (SpriteGo*)AddGo(new SpriteGo("graphics/RealHpBar.png", "RealHpBar"));
 	HpBar->sprite.setScale(0.f, 0.f);
 	RealHpBar->sprite.setScale(0.f, 0.f);
 	AddGo(new RectangleGo(healthBar, "healthBar"));
+	SpriteGo* select = (SpriteGo*)AddGo(new SpriteGo("graphics/selectIcon.png", "Select"));
+	select->SetActive(false);
+	SpriteGo* menu = (SpriteGo*)AddGo(new SpriteGo("graphics/menuBox.png", "Menu"));
+	menu->SetActive(false);
+	SpriteGo* explainMenu = (SpriteGo*)AddGo(new SpriteGo("graphics/menuBox.png", "ExplainMenu"));
+	explainMenu->SetActive(false);
 	//std::cout<<rect.getPosition().x << std::endl;
 	//몬스터볼 연출 효과
 	SpriteGo* effectBall = (SpriteGo*)AddGo(new SpriteGo("","Effect"));
 	effectBall->sprite.setPosition(267, 530);
 	effectBall->sprite.setScale(3.f, 3.f);
 	effectBall->sortLayer = 204;
-
+	AddGo(new TextGo("menuMessage1", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("menuMessage2", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("menuMessage3", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("menuMessage4", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("SkillMessage1", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("SkillMessage2", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("SkillMessage3", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("SkillMessage4", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("SkillExplain", "fonts/DOSPilgi.ttf"));
+	AddGo(new TextGo("SkillText", "fonts/DOSPilgi.ttf"));
+	
 	//메뉴 내 사각형 아이콘
 
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/MonsterBallEffect.csv"));
@@ -79,7 +97,7 @@ void SceneBattle::Enter()
 	uiView.setCenter(size * 0.5f);
 	Scene::Enter();
 	RectangleGo* recgo = (RectangleGo*)FindGo("square");
-	recgo->rectangle.setFillColor(sf::Color::White);
+	recgo->rectangle.setFillColor({248,248,248});
 	recgo->SetOrigin(Origins::MC);
 	recgo->rectangle.setPosition(0,0);
 
@@ -124,12 +142,20 @@ void SceneBattle::Enter()
 	realHpBar->SetPosition(336, 95);
 	realHpBar->sortLayer = 202;
 	realHpBar->SetActive(false);
+	
+	/*SpriteGo* select = (SpriteGo*)FindGo("Select");
+	select->SetPosition(100, 100);
+	select->sprite.setScale(10.f, 10.f);*/
+	
+	
 	RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
 	pokemonHealth->SetOrigin(Origins::TL);
 	pokemonHealth->rectangle.setPosition(452, 111);
 	pokemonHealth->rectangle.setFillColor(sf::Color::Green);
 	pokemonHealth->sortLayer = 203;
 	pokemonHealth->SetActive(false);
+	
+	
 }
 
 void SceneBattle::Exit()
@@ -139,6 +165,7 @@ void SceneBattle::Exit()
 
 void SceneBattle::Update(float dt)
 {
+	//std::cout << menuIndex << std::endl;
 	//test code
 	sf::Vector2f mousePos = INPUT_MGR.GetMousePos(); //마우스 위치
 	sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrScene()->ScreenToWorldPos(mousePos);
@@ -148,8 +175,11 @@ void SceneBattle::Update(float dt)
 	SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
 	SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
 	SpriteGo* user = (SpriteGo*)FindGo("User");
+	SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
+	//SpriteGo* list = (SpriteGo*)FindGo("List");
 	user->SetOrigin(Origins::BL);
-	if (!listMove) {
+	if (!listMove) //처음 몬스터 이미지 움직임
+	{
 		list->sprite.move(4.f, 0);
 		clock.restart();
 	}
@@ -175,44 +205,12 @@ void SceneBattle::Update(float dt)
 	{
 		RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
 		SpriteGo* realHpBar = (SpriteGo*)FindGo("RealHpBar");
-		SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
+		
 		pokemonHealth->SetActive(true);
 		realHpBar->SetActive(true);
 		HpBar->SetActive(true);
 	}
-	if (clock.getElapsedTime() > interfaceTime)
-	{
-		if (userMove&&INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
-		{
-			userMove = false;
-			//user->sprite.move(-5.f, 0.f);
-			//user->SetActive(false);
-		}
-	}
-	/*std::cout << user->sprite.getPosition().x << std::endl;
-	std::cout << -windowSize.x << std::endl;*/
-	if (user->GetActive() && user->sprite.getPosition().x <= -windowSize.x)
-	{
-		user->SetActive(false);
-	}
-	if (!user->GetActive()&&!aniPlay)
-	{
-		animation.Play("MonsterBallEffect");
-		
-		std::cout << "실행했다." << std::endl;
-		aniPlay = true;
-		clock.restart();
-	}
-
-	if (aniPlay && clock.getElapsedTime() > sf::seconds(0.4f))
-	{
-		effectBall->SetActive(false);
-	}
-	if (!effectBall->GetActive())
-	{
-		mymonster->SetActive(true);
-	}
-	if (clock.getElapsedTime() > interfaceTime)
+	//if (clock.getElapsedTime() > interfaceTime)
 	{
 		if (userMove&&INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
 		{
@@ -247,28 +245,58 @@ void SceneBattle::Update(float dt)
 	if (mymonster->GetActive())
 	{
 		Battle(dt);
+		if (!trigger1) 
+		{
+			MoveCursorMenu();
+		}
+		if (trigger1)
+		{
+			SelectMenu();
+		}
+		if(!trigger2)
+		{
+			MoveCursorSkill();
+			clock2.restart();
+		}
+		if (trigger2&& (clock2.getElapsedTime() > sf::seconds(0.5f)))
+		{
+			std::cout << "적체력깎음" << std::endl;
+			
+			if (healthBar.x <= 0)
+			{
+				damage = 0;
+			}
+			healthBar.x -= damage*dt;
+			RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
+			pokemonHealth->rectangle.setSize(healthBar);
+			if (healthBar.x < 265 &&
+				healthBar.x > 106)
+			{
+				pokemonHealth->rectangle.setFillColor(sf::Color::Yellow);
+			}
+			else if (healthBar.x < 106&&
+				healthBar.x > 0)
+			{
+				pokemonHealth->rectangle.setFillColor(sf::Color::Red);
+			}
+			else if (healthBar.x <= 0)
+			{
+				healthBar.x = 0;
+				damage = 0;
+				
+				list->sprite.move(0.f, 5.f);
+				
+			}
+			
+
+
+		}
+		if (list->sprite.getPosition().y > windowSize.y)
+		{
+			SCENE_MGR.ChangeScene(SceneId::Game);
+		}
 	}
-
-
-
-
-
-
-
-
-
-
-
 	animation.Update(dt);
-
-
-
-
-
-
-
-
-
 
 	Scene::Update(dt);
 	
@@ -282,6 +310,7 @@ void SceneBattle::Update(float dt)
 	{
 		std::cout << mousePos.x << "," << mousePos.y << std::endl;
 	}
+	//MoveCursorMenu();
 }
 
 void SceneBattle::Draw(sf::RenderWindow& window)
@@ -291,26 +320,465 @@ void SceneBattle::Draw(sf::RenderWindow& window)
 
 void SceneBattle::Battle(float dt)
 {
-	timer += dt;
-	int turn = 0;
-	RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
-	PlayerMenu();
+	//timer += dt;
+	//int turn = 0;
+	//RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
+	SpriteGo* menu = (SpriteGo*)FindGo("Menu");
+	menu->sprite.setScale(1.65f, 1.38f);
+	menu->SetPosition(700, 600);
+	menu->sortLayer = 205;
+	menu->SetActive(true);
+
+	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
+	selectIcon->sprite.setScale(10.f, 10.f);
+	selectIcon->sprite.setPosition(selectFirstPos);
+	selectIcon->sortLayer = 210;
+	selectIcon->SetActive(true);
+	//PlayerMenu();
+	MenuText();
+	//if (clock.getElapsedTime() > sf::seconds(0.4f)) {}
 //	pokemonHealth
 }
 
-void SceneBattle::PlayerMenu()
+//void SceneBattle::PlayerMenu()
+//{
+//
+//	SpriteGo* menu = (SpriteGo*)FindGo("Menu");
+//	menu->SetActive(true);
+//	menu->sprite.setScale(1.65f, 1.38f);
+//	menu->SetPosition(700, 600);
+//	menu->sortLayer = 205;
+//
+//	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
+//	selectIcon->sprite.setScale(10.f, 10.f);
+//	selectIcon->sprite.setPosition(selectFirstPos);
+//	selectIcon->SetActive(true);
+//	selectIcon->sortLayer = 210;
+//	//if (!menuSelect)
+//	MenuText();
+//	
+//
+//	
+//	//std::cout << "여기지나감." << std::endl;
+//	/*TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
+//	std::wstring attack = stringTable->GetUni("ATTACK", Languages::KOR);
+//	menuText1->text.setCharacterSize(70);
+//	menuText1->text.setString(attack);
+//	menuText1->text.setFillColor(sf::Color::Black);
+//	menuText1->SetOrigin(Origins::TL);
+//	menuText1->SetPosition(896,675);
+//	menuText1->sortLayer = 207;
+//	TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
+//	std::wstring myPokemon = stringTable->GetUni("POKEMON", Languages::KOR);
+//	menuText2->text.setCharacterSize(70);
+//	menuText2->text.setString(myPokemon);
+//	menuText2->text.setFillColor(sf::Color::Black);
+//	menuText2->SetOrigin(Origins::TL);
+//	menuText2->SetPosition(1350, 675);
+//	menuText2->sortLayer = 207;
+//	TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
+//	std::wstring myBag = stringTable->GetUni("BAG", Languages::KOR);
+//	menuText3->text.setCharacterSize(70);
+//	menuText3->text.setString(myBag);
+//	menuText3->text.setFillColor(sf::Color::Black);
+//	menuText3->SetOrigin(Origins::TL);
+//	menuText3->SetPosition(896, 850);
+//	menuText3->sortLayer = 207;
+//	TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
+//	std::wstring run = stringTable->GetUni("RUN", Languages::KOR);
+//	menuText4->text.setCharacterSize(70);
+//	menuText4->text.setString(run);
+//	menuText4->text.setFillColor(sf::Color::Black);
+//	menuText4->SetOrigin(Origins::TL);
+//	menuText4->SetPosition(1350, 850);
+//	menuText4->sortLayer = 207;*/
+//
+//}
+
+
+
+void SceneBattle::MenuText()
 {
-	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
-	selectIcon->sprite.setScale(10.f, 10.f);
-	selectIcon->SetPosition(windowSize.x / 2,windowSize.y/2);
-	//switch()
+	//기본으로 보여줄 메뉴들
+	if (!menuDisplay) {
+
+		StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+		TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
+		std::wstring attack = stringTable->GetUni("ATTACK", Languages::KOR);
+		menuText1->text.setCharacterSize(70);
+		menuText1->text.setString(attack);
+		menuText1->text.setFillColor(sf::Color::Black);
+		menuText1->SetOrigin(Origins::TL);
+		menuText1->SetPosition(textFirstPos);
+		menuText1->sortLayer = 207;
+	
+		TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
+		std::wstring myPokemon = stringTable->GetUni("POKEMON", Languages::KOR);
+		menuText2->text.setCharacterSize(70);
+		menuText2->text.setString(myPokemon);
+		menuText2->text.setFillColor(sf::Color::Black);
+		menuText2->SetOrigin(Origins::TL);
+		menuText2->SetPosition(textFirstPos.x+454, textFirstPos.y);
+		menuText2->sortLayer = 207;
+		TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
+		std::wstring myBag = stringTable->GetUni("BAG", Languages::KOR);
+		menuText3->text.setCharacterSize(70);
+		menuText3->text.setString(myBag);
+		menuText3->text.setFillColor(sf::Color::Black);
+		menuText3->SetOrigin(Origins::TL);
+		menuText3->SetPosition(textFirstPos.x, textFirstPos.y+170);
+		menuText3->sortLayer = 207;
+		TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
+		std::wstring run = stringTable->GetUni("RUN", Languages::KOR);
+		menuText4->text.setCharacterSize(70);
+		menuText4->text.setString(run);
+		menuText4->text.setFillColor(sf::Color::Black);
+		menuText4->SetOrigin(Origins::TL);
+		menuText4->SetPosition(textFirstPos.x+454, textFirstPos.y + 170);
+		menuText4->sortLayer = 207;
+	}
+	if (!menuDisplay&&INPUT_MGR.GetKeyUp(sf::Keyboard::Enter))
+	{
+		//menuIndex = 0;
+		menuDisplay = true;
+		std::cout << "여디야" << std::endl;
+	}
+	if (menuDisplay&&!trigger1) {
+		trigger1 = true;
+	}
+	/*if (menuIndex == 0)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right))
+		{
+			menuIndex++;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down))
+		{
+			menuIndex++;
+			menuIndex++;
+		}
+	}
+	if (menuIndex == 1)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x + 454.f, selectFirstPos.y);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left))
+		{
+			menuIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down))
+		{
+			menuIndex++;
+			menuIndex++;
+		}
+	}
+	if (menuIndex == 2)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x, selectFirstPos.y + 175.f);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up))
+		{
+			menuIndex--;
+			menuIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right))
+		{
+			menuIndex++;
+		}
+	}
+	if (menuIndex == 3)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x + 454.f, selectFirstPos.y+175.f);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left))
+		{
+			menuIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up))
+		{
+			menuIndex--;
+			menuIndex--;
+		}
+	}*/
+}
+
+void SceneBattle::SelectMenu()
+{
+	//MoveCursorMenu();
+
+	//if(INPUT_MGR.GetKeyUp(sf::Keyboard::Enter)){
+		switch (menuIndex)
+		{
+		case (int)Menu::Skill:
+			SkillSelect();
+			
+			break;
+		case (int)Menu::Bag:
+			//SkillSelect();
+			break;
+		case (int)Menu::Pokemon:
+			//SelectPokemon();
+			break;
+		case (int)Menu::Run:
+			BattleEnd();
+			break;
+		}
+	//}
+
+	
 }
 
 void SceneBattle::SkillSelect()
 {
+	if (menuDisplay) {
+		StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+
+	
+		TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
+		std::wstring skill1 = stringTable->GetUni("THUNDER", Languages::KOR);
+		menuText1->text.setCharacterSize(70);
+		menuText1->text.setString(skill1);
+		menuText1->text.setFillColor(sf::Color::Black);
+		menuText1->SetOrigin(Origins::TL);
+		menuText1->SetPosition(textFirstPos);
+		menuText1->sortLayer = 207;
+
+		TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
+		std::wstring skill2 = stringTable->GetUni("SPEED_ATTACK", Languages::KOR);
+		menuText2->text.setCharacterSize(70);
+		menuText2->text.setString(skill2);
+		menuText2->text.setFillColor(sf::Color::Black);
+		menuText2->SetOrigin(Origins::TL);
+		menuText2->SetPosition(textFirstPos.x + 454, textFirstPos.y);
+		menuText2->sortLayer = 207;
+		TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
+		std::wstring skill3 = stringTable->GetUni("TENMILLIONBOLT", Languages::KOR);
+		menuText3->text.setCharacterSize(70);
+		menuText3->text.setString(skill3);
+		menuText3->text.setFillColor(sf::Color::Black);
+		menuText3->SetOrigin(Origins::TL);
+		menuText3->SetPosition(textFirstPos.x, textFirstPos.y + 170);
+		menuText3->sortLayer = 207;
+		TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
+		std::wstring skill4 = stringTable->GetUni("IRONTAIL", Languages::KOR);
+		menuText4->text.setCharacterSize(70);
+		menuText4->text.setString(skill4);
+		menuText4->text.setFillColor(sf::Color::Black);
+		menuText4->SetOrigin(Origins::TL);
+		menuText4->SetPosition(textFirstPos.x + 454, textFirstPos.y + 170);
+		menuText4->sortLayer = 207;
+	
+
+
+	}
+
+	if (!trigger2&&INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
+	{
+		trigger2 = true;
+		std::cout << "Trigger2는 거짓" << std::endl;
+		//SkillExplain(SetSkill());
+	}
+	if(trigger2)
+	{
+		std::cout << "Trigger2는 참" << std::endl;
+		SetSkill();
+	}
 }
+
+void SceneBattle::SetSkill()
+{
+	std::cout << "setSkill을 들어옴" << std::endl;
+	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter)) 
+	{
+		switch (skillIndex)
+		{
+		case (int)SkillNum::Skill1:
+			SkillExplain((int)SkillNum::Skill1);
+
+			break;
+		case (int)SkillNum::Skill2:
+			SkillExplain((int)SkillNum::Skill2);
+			break;
+		case (int)SkillNum::Skill3:
+			SkillExplain((int)SkillNum::Skill3);
+			break;
+		case (int)SkillNum::Skill4:
+			SkillExplain((int)SkillNum::Skill4);
+			break;
+		}
+	}
+
+}
+
+void SceneBattle::SkillExplain(int n)
+{
+	StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+	
+	SpriteGo* menu = (SpriteGo*)FindGo("ExplainMenu");
+	menu->SetActive(true);
+	//menu->sprite.setColor(sf::Color::White);
+	menu->sprite.setScale(1.5f, 1.38f);
+	menu->SetPosition(900, 600);
+	menu->sortLayer = 211;
+	std::wstring useskill;
+	TextGo* skillExplain = (TextGo*)FindGo("SkillExplain");
+	std::wstring skill= stringTable->GetUni("SKILLEXPLAIN", Languages::KOR);
+	skillExplain->text.setCharacterSize(40);
+	skillExplain->text.setFillColor(sf::Color::Black);
+	skillExplain->text.setString(skill);
+	skillExplain->SetOrigin(Origins::TL);
+	skillExplain->SetPosition(973,678);
+	skillExplain->sortLayer = 212;
+	switch (n)
+	{
+	case 0:
+		useskill = stringTable->GetUni("THUNDER", Languages::KOR);
+		break;
+	case 1:
+		useskill = stringTable->GetUni("SPEED_ATTACK", Languages::KOR);
+		break;
+	case 2:
+		useskill = stringTable->GetUni("TENMILLIONBOLT", Languages::KOR);
+		break;
+	case 3:
+		useskill = stringTable->GetUni("IRONTAIL", Languages::KOR);
+		break;
+	}
+	TextGo* skillText = (TextGo*)FindGo("SkillText");
+	skillText->text.setCharacterSize(80);
+	skillText->text.setFillColor(sf::Color::Black);
+	skillText->text.setString(useskill);
+	skillText->SetOrigin(Origins::TL);
+	skillText->SetPosition(973,837);
+	skillText->sortLayer = 212;
+	
+	
+	
+}
+
+
 
 void SceneBattle::BattleEnd()
 {
 	SCENE_MGR.ChangeScene(SceneId::Game);
+}
+
+void SceneBattle::MoveCursorMenu()
+{
+	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
+	if (menuIndex == 0)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right))
+		{
+			menuIndex++;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down))
+		{
+			menuIndex++;
+			menuIndex++;
+		}
+	}
+	if (menuIndex == 1)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x + 454.f, selectFirstPos.y);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left))
+		{
+			menuIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down))
+		{
+			menuIndex++;
+			menuIndex++;
+		}
+	}
+	if (menuIndex == 2)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x, selectFirstPos.y + 175.f);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up))
+		{
+			menuIndex--;
+			menuIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right))
+		{
+			menuIndex++;
+		}
+	}
+	if (menuIndex == 3)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x + 454.f, selectFirstPos.y + 175.f);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left))
+		{
+			menuIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up))
+		{
+			menuIndex--;
+			menuIndex--;
+		}
+	}
+	/*if (INPUT_MGR.GetKeyUp(sf::Keyboard::Enter))
+	{
+		return menuIndex;
+	}*/
+}
+
+void SceneBattle::MoveCursorSkill()
+{
+	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
+	if (skillIndex == 0)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right))
+		{
+			skillIndex++;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down))
+		{
+			skillIndex++;
+			skillIndex++;
+		}
+	}
+	if (skillIndex == 1)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x + 454.f, selectFirstPos.y);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left))
+		{
+			skillIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down))
+		{
+			skillIndex++;
+			skillIndex++;
+		}
+	}
+	if (skillIndex == 2)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x, selectFirstPos.y + 175.f);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up))
+		{
+			skillIndex--;
+			skillIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right))
+		{
+			skillIndex++;
+		}
+	}
+	if (skillIndex == 3)
+	{
+		selectIcon->sprite.setPosition(selectFirstPos.x + 454.f, selectFirstPos.y + 175.f);
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left))
+		{
+			skillIndex--;
+		}
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up))
+		{
+			skillIndex--;
+			skillIndex--;
+		}
+	}
+	/*if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
+	{
+		return skillIndex;
+	}*/
 }

@@ -10,6 +10,22 @@ enum class Languages
 	COUNT,
 };
 
+enum class Menu
+{
+	Skill = 0,
+	Bag,
+	Pokemon,
+	Run,
+};
+
+enum class SkillNum
+{
+	Skill1 = 0,
+	Skill2,
+	Skill3,
+	Skill4,
+};
+
 enum class Origins
 {
 	TL,

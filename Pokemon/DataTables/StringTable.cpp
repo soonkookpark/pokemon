@@ -2,17 +2,6 @@
 #include "StringTable.h"
 #include "rapidcsv.h"
 
-const std::string& StringTable::Get(const std::string& id, Languages lang) const
-{
-	auto& table = tables[(int)lang];
-	auto find = table.find(id);
-	if (find == table.end())
-	{
-		return "ERR: Undefined ID";
-	}
-	return find->second;
-}
-
 bool StringTable::Load()
 {
 	std::vector<std::string> filenames;
@@ -43,4 +32,34 @@ void StringTable::Release()
 		table.clear();
 	}
 	//tables.clear();
+}
+
+const std::string& StringTable::Get(const std::string& id, Languages lang) const
+{
+	auto& table = tables[(int)lang];
+
+	auto find = table.find(id);
+	if (find == table.end()) //존재하지 않을 때
+	{
+		return "ERR: Undefined"; //에러
+	}
+	return find->second;
+}
+
+std::wstring multibyte_to_uni(const std::string& str) {
+	int nLen = str.size();
+	wchar_t warr[256];
+	MultiByteToWideChar(CP_ACP, 0, (LPCSTR)str.c_str(), -1, warr, nLen);
+
+	return warr;
+	//char carr[256];
+	//memset(carr, '\0', sizeof(carr));
+	//WideCharToMultiByte(CP_UTF8, 0, warr, -1, carr, 256, NULL, NULL);
+	//return carr;
+}
+
+const std::wstring StringTable::GetUni(const std::string& id, Languages lang)
+{
+	std::string multibyteString = Get(id, lang);
+	return multibyte_to_uni(multibyteString);
 }
