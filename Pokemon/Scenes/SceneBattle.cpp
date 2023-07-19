@@ -210,6 +210,38 @@ void SceneBattle::Update(float dt)
 	{
 		mymonster->SetActive(true);
 	}
+	if (clock.getElapsedTime() > interfaceTime)
+	{
+		if (userMove&&INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
+		{
+			userMove = false;
+			//user->sprite.move(-5.f, 0.f);
+			//user->SetActive(false);
+		}
+	}
+	/*std::cout << user->sprite.getPosition().x << std::endl;
+	std::cout << -windowSize.x << std::endl;*/
+	if (user->GetActive() && user->sprite.getPosition().x <= -windowSize.x)
+	{
+		user->SetActive(false);
+	}
+	if (!user->GetActive()&&!aniPlay)
+	{
+		animation.Play("MonsterBallEffect");
+		
+		std::cout << "실행했다." << std::endl;
+		aniPlay = true;
+		clock.restart();
+	}
+
+	if (aniPlay && clock.getElapsedTime() > sf::seconds(0.4f))
+	{
+		effectBall->SetActive(false);
+	}
+	if (!effectBall->GetActive())
+	{
+		mymonster->SetActive(true);
+	}
 	if (mymonster->GetActive())
 	{
 		Battle(dt);
