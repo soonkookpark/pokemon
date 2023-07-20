@@ -28,7 +28,7 @@ ResourceMgr::~ResourceMgr()
 void ResourceMgr::Init()
 {
 	LoadFromCsv("scripts/DefaultResourceList.csv", true);
-	
+	//LoadFromCsv("graphics / PokemonList.png", "List")
 }
 
 void ResourceMgr::UnLoadAll()

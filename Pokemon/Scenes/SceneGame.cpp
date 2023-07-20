@@ -277,7 +277,10 @@ void SceneGame::CheckCollide(float dt)
 				}
 				if (!battleNow&&randomNum>=80)
 				{
-					player->ChangePlayerMove();
+					if (!player->GetPlayerMove())
+					{
+						player->ChangePlayerMove();
+					}
 					std::cout << "배틀을 시작하지" << std::endl;
 					clock.restart();
 					battleNow = true;
@@ -288,7 +291,17 @@ void SceneGame::CheckCollide(float dt)
 				if(battleNow/*&&battleWaitTime < sceneClock.getElapsedTime()*/)
 				{
 					BattleStart(dt);
+					/*if (player->GetPlayerMove())
+					{
+						player->ChangePlayerMove();
+					} */
 					std::cout << "0여기 왔다." << std::endl;
+				}
+				if (!battleNow) {
+					if (player->GetPlayerMove())
+					{
+						player->ChangePlayerMove();
+					}
 				}
 						
 				/*worldView.setRotation(180.f);*/

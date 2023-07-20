@@ -10,7 +10,7 @@
 #include "TextGo.h"
 #include "StringTable.h"
 #include "DataTableMgr.h"
-
+#include "Monster.h"
 SceneBattle::SceneBattle() : Scene(SceneId::Battle)
 {
 	resourceListPath = "scripts/SceneBattleResourceList.csv";
@@ -25,44 +25,46 @@ void SceneBattle::Init()
 	worldView.setSize(windowSize);
 	uiView.setSize(windowSize);
 	uiView.setCenter(centerPos);
-	AddGo(new RectangleGo(windowSize, "square"));
-	AddGo(new SpriteGo("graphics/PokemonList.png", "List"));
-	AddGo(new SpriteGo("graphics/PokemonList.png", "myMonster"));
-	AddGo(new SpriteGo("graphics/User.png", "User"));
-	SpriteGo* HpBar= (SpriteGo*)AddGo(new SpriteGo("graphics/HpBar.png", "HpBar"));
-	SpriteGo* RealHpBar = (SpriteGo*)AddGo(new SpriteGo("graphics/RealHpBar.png", "RealHpBar"));
-	HpBar->sprite.setScale(0.f, 0.f);
-	RealHpBar->sprite.setScale(0.f, 0.f);
-	AddGo(new RectangleGo(healthBar, "healthBar"));
-	SpriteGo* select = (SpriteGo*)AddGo(new SpriteGo("graphics/selectIcon.png", "Select"));
-	select->SetActive(false);
-	SpriteGo* menu = (SpriteGo*)AddGo(new SpriteGo("graphics/menuBox.png", "Menu"));
-	menu->SetActive(false);
-	SpriteGo* explainMenu = (SpriteGo*)AddGo(new SpriteGo("graphics/menuBox.png", "ExplainMenu"));
-	explainMenu->SetActive(false);
+	recgo = (RectangleGo*)AddGo(new RectangleGo(windowSize, "square"));
+	pokemonHealth = (RectangleGo*)AddGo(new RectangleGo(healthBar, "healthBar"));
+	
+	
+	
+	
+	
+	list = (SpriteGo*)AddGo(new SpriteGo("graphics/PokemonList.png", "List"));
+	mymonster = (SpriteGo*)AddGo(new SpriteGo("graphics/PokemonList.png", "myMonster"));
+	user =(SpriteGo*)AddGo(new SpriteGo("graphics/User.png", "User"));
+	HpBar= (SpriteGo*)AddGo(new SpriteGo("graphics/HpBar.png", "HpBar"));
+	realHpBar = (SpriteGo*)AddGo(new SpriteGo("graphics/RealHpBar.png", "RealHpBar"));
+	selectIcon = (SpriteGo*)AddGo(new SpriteGo("graphics/selectIcon.png", "Select"));
+	menu = (SpriteGo*)AddGo(new SpriteGo("graphics/menuBox.png", "Menu"));
+	explainMenu = (SpriteGo*)AddGo(new SpriteGo("graphics/menuBox.png", "ExplainMenu"));
 	//std::cout<<rect.getPosition().x << std::endl;
 	//몬스터볼 연출 효과
-	SpriteGo* effectBall = (SpriteGo*)AddGo(new SpriteGo("","Effect"));
-	effectBall->sprite.setPosition(267, 530);
+	effectBall = (SpriteGo*)AddGo(new SpriteGo("","Effect"));
+	/*HpBar->sprite.setScale(0.f, 0.f);
+	RealHpBar->sprite.setScale(0.f, 0.f);
+	select->SetActive(false);
+	menu->SetActive(false);
+	explainMenu->SetActive(false);*/
+	/*effectBall->sprite.setPosition(267, 530);
 	effectBall->sprite.setScale(3.f, 3.f);
-	effectBall->sortLayer = 204;
+	effectBall->sortLayer = 204;*/
 
-	AddGo(new TextGo("menuMessage1", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("menuMessage2", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("menuMessage3", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("menuMessage4", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("SkillMessage1", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("SkillMessage2", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("SkillMessage3", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("SkillMessage4", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("SkillExplain", "fonts/DOSPilgi.ttf"));
-	AddGo(new TextGo("SkillText", "fonts/DOSPilgi.ttf"));
+	menuText1 = (TextGo*)AddGo(new TextGo("menuMessage1", "fonts/DOSPilgi.ttf"));
+	menuText2 = (TextGo*)AddGo(new TextGo("menuMessage2", "fonts/DOSPilgi.ttf"));
+	menuText3 = (TextGo*)AddGo(new TextGo("menuMessage3", "fonts/DOSPilgi.ttf"));
+	menuText4 = (TextGo*)AddGo(new TextGo("menuMessage4", "fonts/DOSPilgi.ttf"));
+	skillMessage1 = (TextGo*)AddGo(new TextGo("SkillMessage1", "fonts/DOSPilgi.ttf"));
+	skillMessage2 = (TextGo*)AddGo(new TextGo("SkillMessage2", "fonts/DOSPilgi.ttf"));
+	skillMessage3 = (TextGo*)AddGo(new TextGo("SkillMessage3", "fonts/DOSPilgi.ttf"));
+	skillMessage4 = (TextGo*)AddGo(new TextGo("SkillMessage4", "fonts/DOSPilgi.ttf"));
+	skillExplain = (TextGo*)AddGo(new TextGo("SkillExplain", "fonts/DOSPilgi.ttf"));
+	skillText = (TextGo*)AddGo(new TextGo("SkillText", "fonts/DOSPilgi.ttf"));
 	
-	RectangleGo* fakeBox = (RectangleGo*)AddGo(new RectangleGo(fakeBoxScale, "fakeBox"));
-	fakeBox->rectangle.setFillColor({ 248,248,248 });
-	fakeBox->rectangle.setPosition(fakeBoxPos);
-	fakeBox->sortLayer = 220;
-	fakeBox->SetActive(true);
+	fakeBox = (RectangleGo*)AddGo(new RectangleGo(fakeBoxScale, "fakeBox"));
+	
 
 	//메뉴 내 사각형 아이콘
 
@@ -76,7 +78,7 @@ void SceneBattle::Init()
 
 void SceneBattle::Release()
 {
-
+	PokemonPool.Release();
 
 	for (auto go : gameObjects)
 	{
@@ -87,21 +89,29 @@ void SceneBattle::Release()
 
 void SceneBattle::Enter()
 {
-	
-	TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
-	TextGo* SkillMessage2 = (TextGo*)FindGo("SkillMessage2");
-	TextGo* SkillMessage3 = (TextGo*)FindGo("SkillMessage3");
-	TextGo* SkillMessage4 = (TextGo*)FindGo("SkillMessage4");
-	TextGo* SkillExplain = (TextGo*)FindGo("SkillExplain");
-	TextGo* SkillText = (TextGo*)FindGo("SkillText");
-	SkillMessage1->SetActive(false);
-	SkillMessage2->SetActive(false);
-	SkillMessage3->SetActive(false);
-	SkillMessage4->SetActive(false);
-	SkillExplain->SetActive(false);
-	SkillText->SetActive(false);
-
 	auto size = FRAMEWORK.GetWindowSize();
+	HpBar->sprite.setScale(0.f, 0.f);
+	//realHpBar->sprite.setScale(0.f, 0.f);
+	selectIcon->SetActive(false);
+	menu->SetActive(false);
+	explainMenu->SetActive(false);
+	effectBall->sprite.setPosition(267, 530);
+	effectBall->sprite.setScale(3.f, 3.f);
+	effectBall->sortLayer = 204;
+	effectBall->SetActive(true);
+	skillMessage1->SetActive(false);
+	skillMessage2->SetActive(false);
+	skillMessage3->SetActive(false);
+	skillMessage4->SetActive(false);
+	skillExplain->SetActive(false);
+	skillText->SetActive(false);
+	fakeBox->rectangle.setFillColor({ 248,248,248 });
+	fakeBox->rectangle.setPosition(fakeBoxPos);
+	fakeBox->sortLayer = 220;
+	fakeBox->SetActive(true);
+
+	
+
 	//auto centerPos = size / 2.f;
 	worldView.setSize(size);
 	worldView.setCenter({ 0,0 });
@@ -120,7 +130,7 @@ void SceneBattle::Enter()
 	//gameEnd = false;
 	menuIndex = 0;
 	skillIndex = 0;
-	RectangleGo* recgo = (RectangleGo*)FindGo("square");
+	//RectangleGo* recgo = (RectangleGo*)FindGo("square");
 	recgo->rectangle.setFillColor({248,248,248});
 	recgo->SetOrigin(Origins::MC);
 	recgo->rectangle.setPosition(0,0);
@@ -128,13 +138,12 @@ void SceneBattle::Enter()
 	//한개 사이즈가 57,188
 	//상대 이미지는 56,56
 	//내 이미지는 48,48
-	SpriteGo* list = (SpriteGo*)FindGo("List");
+	/*SpriteGo* list = (SpriteGo*)FindGo("List");*/
 	randomNum = Utils::RandomRange(1, 100);
 	iNum = randomNum % 30;
 	jNum = randomNum % 25;
 
-	SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
-	effectBall->SetActive(true);
+	/*SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");*/
 
 
 
@@ -146,7 +155,7 @@ void SceneBattle::Enter()
 	list->sortLayer = 204;
 
 	//내 몬스터
-	SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
+	//SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
 	sf::IntRect myMonsterImageRect(693, 516, userMosterSize, userMosterSize);
 	mymonster->sprite.setTextureRect(myMonsterImageRect);
 	mymonster->sprite.setPosition(180, 428);
@@ -155,7 +164,24 @@ void SceneBattle::Enter()
 	mymonster->sortLayer = 204;
 	mymonster->SetActive(false);
 
-	SpriteGo* user = (SpriteGo*)FindGo("User");
+	//
+	PokemonPool.OnCreate = [this](Monster* pokemon)
+	{
+		Monster::Pokemons pokemonSetting = (Monster::Pokemons)Utils::RandomRange(0, Monster::TotalMonster);
+		pokemon->textureId = "graphics/PokemonList.png";
+		pokemon->SetType(pokemonSetting);
+		
+
+	};
+	PokemonPool.Init();
+
+
+
+
+
+
+
+	//SpriteGo* user = (SpriteGo*)FindGo("User");
 	sf::IntRect userImageRect(72, 374, userSize, userSize);
 	user->sprite.setTextureRect(userImageRect);
 	user->sprite.setPosition(size.x, 690);
@@ -166,13 +192,13 @@ void SceneBattle::Enter()
 	clock.restart();
 	
 
-	SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
+	//SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
 	HpBar->SetOrigin(Origins::TL);
 	HpBar->sprite.setScale(1.f, 3.f);
 	HpBar->SetPosition(186, 95);
 	HpBar->sortLayer = 201;
 	HpBar->SetActive(false);
-	SpriteGo* realHpBar = (SpriteGo*)FindGo("RealHpBar");
+	//SpriteGo* realHpBar = (SpriteGo*)FindGo("RealHpBar");
 	realHpBar->SetOrigin(Origins::TL);
 	realHpBar->sprite.setScale(1.2f, 2.f);
 	realHpBar->SetPosition(336, 95);
@@ -184,7 +210,7 @@ void SceneBattle::Enter()
 	select->sprite.setScale(10.f, 10.f);*/
 	
 	healthBar = { 3.54f * 100,25.f };
-	RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
+	//RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
 	pokemonHealth->SetOrigin(Origins::TL);
 	pokemonHealth->rectangle.setPosition(452, 111);
 	pokemonHealth->rectangle.setSize(healthBar);
@@ -192,12 +218,9 @@ void SceneBattle::Enter()
 	pokemonHealth->sortLayer = 203;
 	pokemonHealth->SetActive(false);
 	
-	SpriteGo* menu = (SpriteGo*)FindGo("Menu");
-	menu->SetActive(false);
-	SpriteGo* explainMenu = (SpriteGo*)FindGo("ExplainMenu");
-	explainMenu->SetActive(false);
-	RectangleGo* fakeBox = (RectangleGo*)FindGo("fakeBox");
-	fakeBox->SetActive(true);
+	//SpriteGo* menu = (SpriteGo*)FindGo("Menu");
+	//SpriteGo* explainMenu = (SpriteGo*)FindGo("ExplainMenu");
+	//RectangleGo* fakeBox = (RectangleGo*)FindGo("fakeBox");
 
 	gameEnd = false;
 	Scene::Enter();
@@ -206,7 +229,7 @@ void SceneBattle::Enter()
 
 void SceneBattle::Exit()
 {
-	Scene::Exit();
+	ClearObjectPool(PokemonPool);
 
 	listMove = false;
 	//userMove = false;
@@ -216,15 +239,15 @@ void SceneBattle::Exit()
 	menuDisplay = false;
 	menuIndex = 0;
 	skillIndex = 0;
-	SpriteGo* user = (SpriteGo*)FindGo("User");
+	//SpriteGo* user = (SpriteGo*)FindGo("User");
 	user->SetActive(false);
-	SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
+	//SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
 	mymonster->SetActive(false);
-	SpriteGo* select = (SpriteGo*)FindGo("Select");
-	select->SetActive(false);
+	//SpriteGo* select = (SpriteGo*)FindGo("Select");
+	selectIcon->SetActive(false);
 	
 	
-	SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
+	//SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
 	effectBall->SetActive(true);
 	/*TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
 	TextGo* SkillMessage2 = (TextGo*)FindGo("SkillMessage2");
@@ -239,7 +262,7 @@ void SceneBattle::Exit()
 	SkillExplain->SetActive(false);
 	SkillText->SetActive(false);*/
 
-
+	Scene::Exit();
 }
 
 void SceneBattle::Update(float dt)
@@ -254,12 +277,12 @@ void SceneBattle::Update(float dt)
 		//std::cout << menuIndex << std::endl;
 		//test code
 
-		SpriteGo* list = (SpriteGo*)FindGo("List");
+		//SpriteGo* list = (SpriteGo*)FindGo("List");
 		list->SetOrigin(Origins::TR);
-		SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
-		SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
-		SpriteGo* user = (SpriteGo*)FindGo("User");
-		SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
+		//SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
+		//SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
+		//SpriteGo* user = (SpriteGo*)FindGo("User");
+		//SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
 		//SpriteGo* list = (SpriteGo*)FindGo("List");
 		
 		if (!listMove) //처음 몬스터 이미지 움직임
@@ -287,8 +310,8 @@ void SceneBattle::Update(float dt)
 		}
 		if (listMove)
 		{
-			RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
-			SpriteGo* realHpBar = (SpriteGo*)FindGo("RealHpBar");
+			//RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
+			//SpriteGo* realHpBar = (SpriteGo*)FindGo("RealHpBar");
 
 			pokemonHealth->SetActive(true);
 			realHpBar->SetActive(true);
@@ -358,7 +381,7 @@ void SceneBattle::Update(float dt)
 					damage = 150;
 				}
 				healthBar.x -= damage * dt;
-				RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
+				//RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
 				pokemonHealth->rectangle.setSize(healthBar);
 				if (healthBar.x < 265 &&
 					healthBar.x > 106)
@@ -420,16 +443,16 @@ void SceneBattle::Battle(float dt)
 	//timer += dt;
 	//int turn = 0;
 	//RectangleGo* pokemonHealth = (RectangleGo*)FindGo("healthBar");
-	SpriteGo* menu = (SpriteGo*)FindGo("Menu");
+	//SpriteGo* menu = (SpriteGo*)FindGo("Menu");
 	menu->sprite.setScale(1.65f, 1.38f);
 	menu->SetPosition(700, 600);
 	menu->sortLayer = 205;
 	menu->SetActive(true);
 
-	RectangleGo* fakeBox = (RectangleGo*)FindGo("fakeBox");
+	//RectangleGo* fakeBox = (RectangleGo*)FindGo("fakeBox");
 	fakeBox->SetActive(false);
 
-	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
+	//SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
 	selectIcon->sprite.setScale(10.f, 10.f);
 	selectIcon->sprite.setPosition(selectFirstPos);
 	selectIcon->sortLayer = 210;
@@ -503,7 +526,7 @@ void SceneBattle::MenuText()
 	if (!menuDisplay) {
 
 		StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
-		TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
+		//TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
 		std::wstring attack = stringTable->GetUni("ATTACK", Languages::KOR);
 		menuText1->text.setCharacterSize(70);
 		menuText1->text.setString(attack);
@@ -512,7 +535,7 @@ void SceneBattle::MenuText()
 		menuText1->SetPosition(textFirstPos);
 		menuText1->sortLayer = 207;
 	
-		TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
+		//TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
 		std::wstring myPokemon = stringTable->GetUni("POKEMON", Languages::KOR);
 		menuText2->text.setCharacterSize(70);
 		menuText2->text.setString(myPokemon);
@@ -520,7 +543,7 @@ void SceneBattle::MenuText()
 		menuText2->SetOrigin(Origins::TL);
 		menuText2->SetPosition(textFirstPos.x+454, textFirstPos.y);
 		menuText2->sortLayer = 207;
-		TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
+		//TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
 		std::wstring myBag = stringTable->GetUni("BAG", Languages::KOR);
 		menuText3->text.setCharacterSize(70);
 		menuText3->text.setString(myBag);
@@ -528,7 +551,7 @@ void SceneBattle::MenuText()
 		menuText3->SetOrigin(Origins::TL);
 		menuText3->SetPosition(textFirstPos.x, textFirstPos.y+170);
 		menuText3->sortLayer = 207;
-		TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
+		//TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
 		std::wstring run = stringTable->GetUni("RUN", Languages::KOR);
 		menuText4->text.setCharacterSize(70);
 		menuText4->text.setString(run);
@@ -632,7 +655,7 @@ void SceneBattle::SkillSelect()
 		StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
 
 	
-		TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
+		//TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
 		std::wstring skill1 = stringTable->GetUni("THUNDER", Languages::KOR);
 		menuText1->text.setCharacterSize(70);
 		menuText1->text.setString(skill1);
@@ -641,7 +664,7 @@ void SceneBattle::SkillSelect()
 		menuText1->SetPosition(textFirstPos);
 		menuText1->sortLayer = 207;
 
-		TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
+		//TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
 		std::wstring skill2 = stringTable->GetUni("SPEED_ATTACK", Languages::KOR);
 		menuText2->text.setCharacterSize(70);
 		menuText2->text.setString(skill2);
@@ -649,7 +672,7 @@ void SceneBattle::SkillSelect()
 		menuText2->SetOrigin(Origins::TL);
 		menuText2->SetPosition(textFirstPos.x + 454, textFirstPos.y);
 		menuText2->sortLayer = 207;
-		TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
+		//TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
 		std::wstring skill3 = stringTable->GetUni("TENMILLIONBOLT", Languages::KOR);
 		menuText3->text.setCharacterSize(70);
 		menuText3->text.setString(skill3);
@@ -657,7 +680,7 @@ void SceneBattle::SkillSelect()
 		menuText3->SetOrigin(Origins::TL);
 		menuText3->SetPosition(textFirstPos.x, textFirstPos.y + 170);
 		menuText3->sortLayer = 207;
-		TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
+		//TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
 		std::wstring skill4 = stringTable->GetUni("IRONTAIL", Languages::KOR);
 		menuText4->text.setCharacterSize(70);
 		menuText4->text.setString(skill4);
@@ -712,14 +735,14 @@ void SceneBattle::SkillExplain(int n)
 {
 	StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
 	
-	SpriteGo* menu = (SpriteGo*)FindGo("ExplainMenu");
+	//SpriteGo* menu = (SpriteGo*)FindGo("ExplainMenu");
 	menu->SetActive(true);
 	//menu->sprite.setColor(sf::Color::White);
 	menu->sprite.setScale(1.5f, 1.38f);
 	menu->SetPosition(900, 600);
 	menu->sortLayer = 211;
 	std::wstring useskill;
-	TextGo* skillExplain = (TextGo*)FindGo("SkillExplain");
+	//TextGo* skillExplain = (TextGo*)FindGo("SkillExplain");
 	std::wstring skill= stringTable->GetUni("SKILLEXPLAIN", Languages::KOR);
 	skillExplain->text.setCharacterSize(40);
 	skillExplain->text.setFillColor(sf::Color::Black);
@@ -743,7 +766,7 @@ void SceneBattle::SkillExplain(int n)
 		useskill = stringTable->GetUni("IRONTAIL", Languages::KOR);
 		break;
 	}
-	TextGo* skillText = (TextGo*)FindGo("SkillText");
+	//TextGo* skillText = (TextGo*)FindGo("SkillText");
 	skillText->text.setCharacterSize(80);
 	skillText->text.setFillColor(sf::Color::Black);
 	skillText->text.setString(useskill);
@@ -825,7 +848,7 @@ void SceneBattle::MoveCursorMenu()
 
 void SceneBattle::MoveCursorSkill()
 {
-	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
+	//SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
 	if (skillIndex == 0)
 	{
 		selectIcon->sprite.setPosition(selectFirstPos);

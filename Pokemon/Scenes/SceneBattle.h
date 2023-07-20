@@ -2,6 +2,12 @@
 #include "Scene.h"
 #include "Framework.h"
 #include "AnimationController.h"
+#include "ObjectPool.h"
+
+class RectangleGo;
+class SpriteGo;
+class TextGo;
+class Monster;
 class SceneBattle : public Scene
 {
 protected:
@@ -38,6 +44,35 @@ protected:
 	int jNum = 0;
 	sf::Vector2f fakeBoxScale = { 1235.f,490.f };
 	sf::Vector2f fakeBoxPos = { 685.f,590.f };
+
+	RectangleGo* recgo = nullptr;
+	RectangleGo* pokemonHealth = nullptr;
+	RectangleGo* fakeBox = nullptr;
+
+	
+	TextGo* menuText1 = nullptr;
+	TextGo* menuText2 = nullptr;
+	TextGo* menuText3 = nullptr;
+	TextGo* menuText4 = nullptr;
+	TextGo* skillMessage1 = nullptr;
+	TextGo* skillMessage2 = nullptr;
+	TextGo* skillMessage3 = nullptr;
+	TextGo* skillMessage4 = nullptr;
+	TextGo* skillExplain = nullptr;
+	TextGo* skillText = nullptr;
+
+
+	SpriteGo* list = nullptr;
+	SpriteGo* mymonster = nullptr;
+	SpriteGo* user = nullptr;
+	SpriteGo* HpBar = nullptr;
+	SpriteGo* realHpBar = nullptr;
+	SpriteGo* selectIcon = nullptr;
+	SpriteGo* menu = nullptr;
+	SpriteGo* explainMenu = nullptr;
+	SpriteGo* effectBall = nullptr;
+
+	ObjectPool<Monster> PokemonPool;
 public:
 
 	SceneBattle();
@@ -51,6 +86,10 @@ public:
 
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
+
+	template <typename T>
+	void ClearObjectPool(ObjectPool<T>& pool);
+
 	void Battle(float dt);
 	//void PlayerMenu();
 	void MoveCursorMenu();
@@ -65,3 +104,12 @@ public:
 	void BattleEnd();
 };
 
+template<typename T>
+inline void SceneBattle::ClearObjectPool(ObjectPool<T>& pool)
+{
+	for (auto obj : pool.GetUseList())
+	{
+		RemoveGo(obj);
+	}
+	pool.Clear();
+}
