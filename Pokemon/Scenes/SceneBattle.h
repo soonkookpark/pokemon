@@ -36,6 +36,8 @@ protected:
 	int randomNum = 0; //= Utils::RandomRange(1, 100);
 	int iNum = 0;
 	int jNum = 0;
+	sf::Vector2f fakeBoxScale = { 1235.f,490.f };
+	sf::Vector2f fakeBoxPos = { 685.f,590.f };
 public:
 
 	SceneBattle();

@@ -49,7 +49,7 @@ void SceneGame::Init() // 안바뀔거면 여기
 		groundBounds.top << "," <<
 		groundBounds.width << std::endl;
 	player->SetWallBounds(groundBounds);
-
+	
 	//gpt
 	RectangleGo* rect = (RectangleGo*)AddGo(new RectangleGo(rectSize,"FadeOut"));
 
@@ -148,8 +148,10 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 	rect->SetOrigin(Origins::MC);
 	rect->rectangle.setScale(rectSize);
 	rect->rectangle.setFillColor(sf::Color::Transparent);
-	Scene::Enter();
 	sceneClock.restart();
+	battleNow = false;
+	randomNum = 0;
+	Scene::Enter();
 	/*SpriteGo* subject = (SpriteGo*)FindGo("Subject");
 	subject->SetPosition(player->GetPosition().x - 180.f, player->GetPosition().y - 180.f);*/
 }

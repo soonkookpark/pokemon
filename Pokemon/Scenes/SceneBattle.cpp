@@ -58,6 +58,12 @@ void SceneBattle::Init()
 	AddGo(new TextGo("SkillExplain", "fonts/DOSPilgi.ttf"));
 	AddGo(new TextGo("SkillText", "fonts/DOSPilgi.ttf"));
 	
+	RectangleGo* fakeBox = (RectangleGo*)AddGo(new RectangleGo(fakeBoxScale, "fakeBox"));
+	fakeBox->rectangle.setFillColor({ 248,248,248 });
+	fakeBox->rectangle.setPosition(fakeBoxPos);
+	fakeBox->sortLayer = 220;
+	fakeBox->SetActive(true);
+
 	//메뉴 내 사각형 아이콘
 
 	animation.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/MonsterBallEffect.csv"));
@@ -82,7 +88,7 @@ void SceneBattle::Release()
 void SceneBattle::Enter()
 {
 	
-	/*TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
+	TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
 	TextGo* SkillMessage2 = (TextGo*)FindGo("SkillMessage2");
 	TextGo* SkillMessage3 = (TextGo*)FindGo("SkillMessage3");
 	TextGo* SkillMessage4 = (TextGo*)FindGo("SkillMessage4");
@@ -93,7 +99,7 @@ void SceneBattle::Enter()
 	SkillMessage3->SetActive(false);
 	SkillMessage4->SetActive(false);
 	SkillExplain->SetActive(false);
-	SkillText->SetActive(false);*/
+	SkillText->SetActive(false);
 
 	auto size = FRAMEWORK.GetWindowSize();
 	//auto centerPos = size / 2.f;
@@ -102,15 +108,16 @@ void SceneBattle::Enter()
 
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
-	Scene::Enter();
 	
 	
 	
 	listMove = false;
 	userMove = false;
+	aniPlay = false;
+	menuDisplay = false;
 	trigger1 = false;
 	trigger2 = false;
-	menuDisplay = false;
+	//gameEnd = false;
 	menuIndex = 0;
 	skillIndex = 0;
 	RectangleGo* recgo = (RectangleGo*)FindGo("square");
@@ -151,10 +158,11 @@ void SceneBattle::Enter()
 	SpriteGo* user = (SpriteGo*)FindGo("User");
 	sf::IntRect userImageRect(72, 374, userSize, userSize);
 	user->sprite.setTextureRect(userImageRect);
-	user->sprite.setPosition(size.x / 2, 150);
-	user->SetOrigin(Origins::BR);
+	user->sprite.setPosition(size.x, 690);
+	user->SetOrigin(Origins::BL);
 	user->sprite.setScale(8.5f, 8.5f);
-	//user->SetActive(true);
+	user->SetActive(true);
+	user->sortLayer = 221;
 	clock.restart();
 	
 
@@ -184,19 +192,27 @@ void SceneBattle::Enter()
 	pokemonHealth->sortLayer = 203;
 	pokemonHealth->SetActive(false);
 	
-	
-	
+	SpriteGo* menu = (SpriteGo*)FindGo("Menu");
+	menu->SetActive(false);
+	SpriteGo* explainMenu = (SpriteGo*)FindGo("ExplainMenu");
+	explainMenu->SetActive(false);
+	RectangleGo* fakeBox = (RectangleGo*)FindGo("fakeBox");
+	fakeBox->SetActive(true);
+
 	gameEnd = false;
+	Scene::Enter();
+
 }
 
 void SceneBattle::Exit()
 {
 	Scene::Exit();
+
 	listMove = false;
-	userMove = false;
+	//userMove = false;
 	trigger1 = false;
 	trigger2 = false;
-	aniPlay = false;
+	//aniPlay = false;
 	menuDisplay = false;
 	menuIndex = 0;
 	skillIndex = 0;
@@ -206,11 +222,11 @@ void SceneBattle::Exit()
 	mymonster->SetActive(false);
 	SpriteGo* select = (SpriteGo*)FindGo("Select");
 	select->SetActive(false);
-	SpriteGo* menu = (SpriteGo*)FindGo("Menu");
-	menu->SetActive(false);
-	SpriteGo* explainMenu = (SpriteGo*)FindGo("ExplainMenu");
-	explainMenu->SetActive(false);
-	TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
+	
+	
+	SpriteGo* effectBall = (SpriteGo*)FindGo("Effect");
+	effectBall->SetActive(true);
+	/*TextGo* SkillMessage1 = (TextGo*)FindGo("SkillMessage1");
 	TextGo* SkillMessage2 = (TextGo*)FindGo("SkillMessage2");
 	TextGo* SkillMessage3 = (TextGo*)FindGo("SkillMessage3");
 	TextGo* SkillMessage4 = (TextGo*)FindGo("SkillMessage4");
@@ -221,7 +237,7 @@ void SceneBattle::Exit()
 	SkillMessage3->SetActive(false);
 	SkillMessage4->SetActive(false);
 	SkillExplain->SetActive(false);
-	SkillText->SetActive(false);
+	SkillText->SetActive(false);*/
 
 
 }
@@ -229,6 +245,7 @@ void SceneBattle::Exit()
 void SceneBattle::Update(float dt)
 {
 	Scene::Update(dt);
+	
 	sf::Vector2f mousePos = INPUT_MGR.GetMousePos(); //마우스 위치
 	sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrScene()->ScreenToWorldPos(mousePos);
 	if (!gameEnd) 
@@ -244,7 +261,7 @@ void SceneBattle::Update(float dt)
 		SpriteGo* user = (SpriteGo*)FindGo("User");
 		SpriteGo* HpBar = (SpriteGo*)FindGo("HpBar");
 		//SpriteGo* list = (SpriteGo*)FindGo("List");
-		user->SetOrigin(Origins::BL);
+		
 		if (!listMove) //처음 몬스터 이미지 움직임
 		{
 			list->sprite.move(4.f, 0);
@@ -256,12 +273,12 @@ void SceneBattle::Update(float dt)
 			//list->SetPosition()
 			listMove = true;
 		}
-
+		user->SetOrigin(Origins::BL);
 		if (!userMove)
 		{
 			user->sprite.move(-4.f, 0.f);
 		}
-		if (user->sprite.getPosition().x == -windowSize.x / 2)
+		if (user->sprite.getPosition().x == 0)
 		{
 			user->sprite.move(0.f, 0.f);
 			//list->SetPosition()
@@ -281,21 +298,25 @@ void SceneBattle::Update(float dt)
 		{
 			if (userMove && INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
 			{
+				
 				userMove = false;
 				//user->sprite.move(-5.f, 0.f);
 				//user->SetActive(false);
 			}
+
 		}
-		/*std::cout << user->sprite.getPosition().x << std::endl;
-		std::cout << -windowSize.x << std::endl;*/
-		if (user->GetActive() && user->sprite.getPosition().x <= -windowSize.x)
+		std::cout << user->sprite.getPosition().x << std::endl;
+		//std::cout << -user->sprite.getScale().x << std::endl;
+		//std::cout << -user->sprite.getScale().x << std::endl;
+		/*std::cout << -windowSize.x << std::endl;*/
+		if (user->GetActive() && user->sprite.getPosition().x <= -400)
 		{
 			user->SetActive(false);
 		}
 		if (!user->GetActive() && !aniPlay)
 		{
-			animation.Play("MonsterBallEffect");
-
+ 			animation.Play("MonsterBallEffect");
+			
 			std::cout << "실행했다." << std::endl;
 			aniPlay = true;
 			clock.restart();
@@ -355,28 +376,32 @@ void SceneBattle::Update(float dt)
 					//damage = 0;
 
 					list->sprite.move(0.f, 5.f);
-					if (list->sprite.getPosition().y > windowSize.y)
-					{
-						SCENE_MGR.ChangeScene(SceneId::Game);
-						gameEnd = true;
-					}
 
 				}
 
-
+				
 
 			}
+			if (list->sprite.getPosition().y >= windowSize.y)
+			{
+				std::cout << "탈출포인트 여기 지났다" << std::endl;
+				BattleEnd();
+				gameEnd = true;
+			}
+
 		}
 
 
 		
 	}
 	animation.Update(dt);
+	//test code
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F2))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Game);
+		//BattleEnd();
 	}
-
+	//ui view 좌표 확ㅇ니
 	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
 	{
 		std::cout << mousePos.x << "," << mousePos.y << std::endl;
@@ -400,6 +425,9 @@ void SceneBattle::Battle(float dt)
 	menu->SetPosition(700, 600);
 	menu->sortLayer = 205;
 	menu->SetActive(true);
+
+	RectangleGo* fakeBox = (RectangleGo*)FindGo("fakeBox");
+	fakeBox->SetActive(false);
 
 	SpriteGo* selectIcon = (SpriteGo*)FindGo("Select");
 	selectIcon->sprite.setScale(10.f, 10.f);
