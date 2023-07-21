@@ -7,7 +7,8 @@ public:
 	{
 		None = -1,
 		String,
-		Monster,
+		Monster
+
 	};
 
 	DataTable(const DataTable& other) = delete;
@@ -17,6 +18,7 @@ protected:
 	Ids tableId = Ids::None;
 
 public:
+	static const int TotalIds = 1;
 	DataTable(DataTable::Ids id) : tableId(id) {}
 	virtual ~DataTable() {}
 

@@ -10,8 +10,20 @@ struct MonsterInfo
     int imagePosY;
     float maxHp;
     int power;
-    //float catchRate;
-    float rate;
+    float catchRate;
+    //float rate;
+    std::string skill1;
+    int skillDamage1;
+    int pp1;
+    std::string skill2;
+    int skillDamage2;
+    int pp2;
+    std::string skill3;
+    int skillDamage3;
+    int pp3;
+    std::string skill4;
+    int skillDamage4;
+    int pp4;
 
 };
 class MonsterTable :

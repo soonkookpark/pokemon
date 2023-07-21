@@ -1,0 +1,9 @@
+ID,FPS,LOOPTYPE,,
+ShakeBallEffect,5,0,,
+,,,,
+TEXTURE_ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/ThrowBallEffectMove.png,0,0,16,16
+graphics/ThrowBallEffectMove.png,0,24,16,16
+graphics/ThrowBallEffectMove.png,0,0,16,16
+graphics/ThrowBallEffectMove.png,0,72,16,16
+graphics/ThrowBallEffectMove.png,0,0,16,16
