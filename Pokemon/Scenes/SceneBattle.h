@@ -3,6 +3,8 @@
 #include "Framework.h"
 #include "AnimationController.h"
 #include "ObjectPool.h"
+#include "StringTable.h"
+#include "DataTableMgr.h"
 
 class RectangleGo;
 class SpriteGo;
@@ -15,17 +17,21 @@ protected:
 	AnimationController animation1;//내 몬스터가 튀어나오는 이펙트
 	AnimationController animation2;//몬스터볼 흔들리는 이펙트
 	AnimationController animation3;//상대 몬스터볼 이펙트
+	AnimationController animation4;//
 
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::RectangleShape rect;
 	int enemySize = 56;
 	int userSize = 48; //유저 사람 이미지
 	int userMosterSize = 48; // 유저 포켓몬 이미지
+	int bounceCount = 0;
+	int shakeCount = 0;
 	float timer = 0;
 	float myHp=100;
 	float enemyHp=100.f;
 	float ballSpeed=0;
 	const float gravity = 9.81f;
+	const float ballGravity = 0.3f;
 	const float throwAngle = 45.f;
 	//
 	//float enemyHpy = 100.f;
@@ -36,14 +42,20 @@ protected:
 	bool trigger1 = false;
 	bool trigger2 = false;
 	bool gameEnd = false;
+	bool throwBall = false;
 	bool catchEffect = false;
 	bool catchBoomEffect = false;
 	bool ballUp = false;
 	bool ballEffectEnd = false;
+	bool ballCountCheck = false;
+	bool shakeEffect = false;
+
+	
 	sf::Clock clock;
 	sf::Clock clock2;
 	sf::Clock ballClock;
 	sf::Clock ballTopClock;
+	sf::Clock ballShakeClock;
 	sf::Time interfaceTime = sf::seconds(3.f);
 	sf::Vector2f healthBar = { 3.54f*100,25.f  };
 	sf::Vector2f effectSize = { 50.f,50.f };
@@ -53,6 +65,8 @@ protected:
 	sf::Vector2f ballEndPos;
 	sf::Vector2f ballNowPos;
 	sf::Vector2f ballTopPos;
+	sf::Vector2f ballPos;
+	sf::Vector2f ballVelocity;
 
 	int menuIndex = 0;
 	int skillIndex = 0;
@@ -78,6 +92,7 @@ protected:
 	TextGo* skillMessage4 = nullptr;
 	TextGo* skillExplain = nullptr;
 	TextGo* skillText = nullptr;
+	TextGo* enemyName = nullptr;
 
 
 	//SpriteGo* list = nullptr;
@@ -91,13 +106,17 @@ protected:
 	SpriteGo* effectBall = nullptr;
 	SpriteGo* shakeBall = nullptr;
 	SpriteGo* effectEnemyBall = nullptr;
+	SpriteGo* catchMonsterBall = nullptr;
 	SpriteGo* ballTop = nullptr;
 	SpriteGo* ballBottom = nullptr;
 	SpriteGo* ball = nullptr;//몬스터볼에 몬스터가 들어왔을때의 볼
+	SpriteGo* successBall = nullptr;
 
 
 	ObjectPool<Monster> PokemonPool;
 	Monster* monster;
+
+	StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
 public:
 
 	SceneBattle();
@@ -120,7 +139,7 @@ public:
 	void MoveCursorMenu();
 	void MoveCursorSkill();
 	void SetSkill();
-	void SelectMenu();
+	void SelectMenu(float dt);
 	void MenuText();
 	void SkillSelect();
 	void SkillExplain(int n);
@@ -129,9 +148,11 @@ public:
 	void BattleEnd();
 	void MeetMonster();
 	void CatchPokemon(float dt);
+	void CatchSuccess();
 	/*float MoveUpBallTop(float dt);
 	float MoveDownBallTop(float dt);*/
 	sf::Vector2f CalculateOrbit(const sf::Vector2f& startPos, const sf::Vector2f& highPos, const sf::Vector2f& endPos,float moveT);
+	void GoBackMenu();
 };
 
 template<typename T>

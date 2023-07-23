@@ -85,4 +85,9 @@ sf::Vector2i Monster::GetImageRectSize()
 	return sf::Vector2i(imagePosX,imagePosY);
 }
 
+std::string Monster::GetMonsterName()
+{
+	return monName;
+}
+
 

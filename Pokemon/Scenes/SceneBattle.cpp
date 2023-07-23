@@ -45,11 +45,13 @@ void SceneBattle::Init()
 	ballTop = (SpriteGo*)AddGo(new SpriteGo("graphics/ThrowBallEffectMove.png", "BallTop"));
 	ballBottom = (SpriteGo*)AddGo(new SpriteGo("graphics/ThrowBallEffectMove.png", "BallBottom"));
 	ball = (SpriteGo*)AddGo(new SpriteGo("graphics/ThrowBallEffectMove.png", "Ball"));
+	successBall = (SpriteGo*)AddGo(new SpriteGo("graphics/ThrowBallEffectMove.png", "SuccessBall"));
 	//std::cout<<rect.getPosition().x << std::endl;
 	//몬스터볼 연출 효과
 	effectBall = (SpriteGo*)AddGo(new SpriteGo("","MonsterBallEffect"));
 	shakeBall = (SpriteGo*)AddGo(new SpriteGo("", "ShakeBallEffect"));
 	effectEnemyBall = (SpriteGo*)AddGo(new SpriteGo("", "MonsterBallEffect"));
+	catchMonsterBall = (SpriteGo*)AddGo(new SpriteGo("", "ShakeBallEffect"));
 	/*HpBar->sprite.setScale(0.f, 0.f);
 	RealHpBar->sprite.setScale(0.f, 0.f);
 	select->SetActive(false);
@@ -69,6 +71,7 @@ void SceneBattle::Init()
 	skillMessage4 = (TextGo*)AddGo(new TextGo("SkillMessage4", "fonts/DOSPilgi.ttf"));
 	skillExplain = (TextGo*)AddGo(new TextGo("SkillExplain", "fonts/DOSPilgi.ttf"));
 	skillText = (TextGo*)AddGo(new TextGo("SkillText", "fonts/DOSPilgi.ttf"));
+	enemyName = (TextGo*)AddGo(new TextGo("EnemyPokemonName", "fonts/DOSPilgi.ttf"));
 	
 	fakeBox = (RectangleGo*)AddGo(new RectangleGo(fakeBoxScale, "fakeBox"));
 	
@@ -93,9 +96,11 @@ void SceneBattle::Init()
 	animation1.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/MonsterBallEffect.csv"));
 	animation2.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/ShakeBallEffect.csv"));
 	animation3.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/MonsterBallEffect.csv"));
+	animation4.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/ShakeBallEffect.csv"));
 	animation1.SetTarget(&effectBall->sprite);
 	animation2.SetTarget(&shakeBall->sprite);
 	animation3.SetTarget(&effectEnemyBall->sprite);
+	animation4.SetTarget(&catchMonsterBall->sprite);//애니메이션 객체를 만들어라 다음부턴. 뒤늦게 이해함.
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -146,6 +151,12 @@ void SceneBattle::Enter()
 	effectEnemyBall->sprite.setScale(3.f, 3.f);
 	effectEnemyBall->sortLayer=205;
 	effectEnemyBall->SetActive(false);
+	catchMonsterBall->SetOrigin(Origins::TL);
+	catchMonsterBall->sprite.setScale(3.f, 3.f);
+	catchMonsterBall->SetActive(false);
+	catchMonsterBall->sortLayer = 205;
+	
+
 	//날라간 뒤 몬스터볼 이미지
 	sf::IntRect ballTopImageRect(0, 96, 16, 8);
 	ballTop->sprite.setTextureRect(ballTopImageRect);
@@ -169,6 +180,14 @@ void SceneBattle::Enter()
 	ball->sortLayer = 224;
 	ball->SetActive(false);
 
+	sf::IntRect successBallRect(0, 124, 16, 16);
+	successBall->sprite.setTextureRect(successBallRect);
+	successBall->SetOrigin(Origins::MC);
+	successBall->sprite.setScale(3.f, 3.f);
+	successBall->sortLayer = 224;
+	successBall->SetActive(false);
+
+
 	skillMessage1->SetActive(false);
 	skillMessage2->SetActive(false);
 	skillMessage3->SetActive(false);
@@ -181,8 +200,8 @@ void SceneBattle::Enter()
 	fakeBox->SetActive(true);
 
 	
-
 	//auto centerPos = size / 2.f;
+
 	
 	
 	
@@ -269,7 +288,8 @@ void SceneBattle::Enter()
 	realHpBar->SetPosition(336, 95);
 	realHpBar->sortLayer = 202;
 	realHpBar->SetActive(false);
-	
+	enemyName->SetActive(false);
+	//enemyName->SetOrigin(Origins::BL);
 	/*SpriteGo* select = (SpriteGo*)FindGo("Select");
 	select->SetPosition(100, 100);
 	select->sprite.setScale(10.f, 10.f);*/
@@ -286,8 +306,20 @@ void SceneBattle::Enter()
 	//SpriteGo* menu = (SpriteGo*)FindGo("Menu");
 	//SpriteGo* explainMenu = (SpriteGo*)FindGo("ExplainMenu");
 	//RectangleGo* fakeBox = (RectangleGo*)FindGo("fakeBox");
-	MeetMonster();
 	gameEnd = false;
+
+	//몬스터볼 던지는 변수 초기화
+	throwBall = false;
+	catchEffect = false;
+	catchBoomEffect = false;
+	ballUp = false;
+	ballEffectEnd = false;
+	ballCountCheck = false;
+	shakeEffect = false;
+	bounceCount = 0;
+	shakeCount = 0;
+
+	MeetMonster();
 	Scene::Enter();
 
 }
@@ -336,7 +368,7 @@ void SceneBattle::Update(float dt)
 	//animation.Play("MonsterBallEffect");
 	sf::Vector2f mousePos = INPUT_MGR.GetMousePos(); //마우스 위치
 	sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrScene()->ScreenToWorldPos(mousePos);
-	if (!gameEnd) 
+	//if (!gameEnd) 
 	{
 
 		//std::cout << menuIndex << std::endl;
@@ -381,22 +413,18 @@ void SceneBattle::Update(float dt)
 			pokemonHealth->SetActive(true);
 			realHpBar->SetActive(true);
 			HpBar->SetActive(true);
+			enemyName->SetActive(true);
 		}
 		//if (clock.getElapsedTime() > interfaceTime)
+		
+		if (userMove && INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
 		{
-			if (userMove && INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
-			{
 				
-				userMove = false;
-				//user->sprite.move(-5.f, 0.f);
-				//user->SetActive(false);
-			}
-
+			userMove = false;
+			//user->sprite.move(-5.f, 0.f);
+			//user->SetActive(false);
 		}
-		//std::cout << user->sprite.getPosition().x << std::endl;
-		//std::cout << -user->sprite.getScale().x << std::endl;
-		//std::cout << -user->sprite.getScale().x << std::endl;
-		/*std::cout << -windowSize.x << std::endl;*/
+				
 		if (user->GetActive() && user->sprite.getPosition().x <= -400)
 		{
 			user->SetActive(false);
@@ -421,6 +449,7 @@ void SceneBattle::Update(float dt)
 		{
 			mymonster->SetActive(true);
 		}
+		//-----------------------여기까지가 몬스터 출현 셋팅
 		if (mymonster->GetActive())
 		{
 			Battle(dt);
@@ -430,7 +459,7 @@ void SceneBattle::Update(float dt)
 			}
 			if (trigger1)
 			{
-				SelectMenu();
+				SelectMenu(dt);
 			}
 			if (!trigger2)
 			{
@@ -478,7 +507,7 @@ void SceneBattle::Update(float dt)
 			{
 				std::cout << "탈출포인트 여기 지났다" << std::endl;
 				BattleEnd();
-				gameEnd = true;
+				//gameEnd = true;
 			}
 
 		}
@@ -496,8 +525,9 @@ void SceneBattle::Update(float dt)
 	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
 	{
 		std::cout << mousePos.x << "," << mousePos.y << std::endl;
+		animation1.Play("MonsterBallEffect");
 	}
-	CatchPokemon(dt);
+	//CatchPokemon(dt);
 	/*if (INPUT_MGR.GetKeyDown(sf::Keyboard::F3))
 	{
 		shakeBall->SetActive(true);
@@ -535,6 +565,7 @@ void SceneBattle::Update(float dt)
 	animation1.Update(dt);
 	animation2.Update(dt);
 	animation3.Update(dt);
+	animation4.Update(dt);
 	//MoveCursorMenu();
 
 }
@@ -631,7 +662,7 @@ void SceneBattle::MenuText()
 	//기본으로 보여줄 메뉴들
 	if (!menuDisplay) {
 
-		StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+		//StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
 		//TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
 		std::wstring attack = stringTable->GetUni("ATTACK", Languages::KOR);
 		menuText1->text.setCharacterSize(70);
@@ -729,7 +760,7 @@ void SceneBattle::MenuText()
 	}*/
 }
 
-void SceneBattle::SelectMenu()
+void SceneBattle::SelectMenu(float dt)
 {
 	//MoveCursorMenu();
 
@@ -741,10 +772,13 @@ void SceneBattle::SelectMenu()
 			
 		break;
 	case (int)Menu::Bag:
+		
 		SkillSelect();
+
 		break;
 	case (int)Menu::Pokemon:
-		SkillSelect();
+		
+		CatchPokemon(dt);
 		break;
 	case (int)Menu::Run:
 		BattleEnd();
@@ -758,7 +792,7 @@ void SceneBattle::SelectMenu()
 void SceneBattle::SkillSelect()
 {
 	if (menuDisplay) {
-		StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+		//StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
 
 	
 		//TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
@@ -810,6 +844,10 @@ void SceneBattle::SkillSelect()
 		std::cout << "Trigger2는 참" << std::endl;
 		SetSkill();
 	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Escape)&&!trigger2)//스킬선택전인경우
+	{
+		GoBackMenu();
+	}
 }
 
 void SceneBattle::SetSkill()
@@ -839,7 +877,7 @@ void SceneBattle::SetSkill()
 
 void SceneBattle::SkillExplain(int n)
 {
-	StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+	//StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
 	
 	//SpriteGo* menu = (SpriteGo*)FindGo("ExplainMenu");
 	explainMenu->SetActive(true);
@@ -897,11 +935,18 @@ void SceneBattle::MeetMonster()
 	monster->SetPosition(0, 0);
 	std::cout << monster->GetImageRectSize().x <<"," << monster->GetImageRectSize().y << std::endl;
 	AddGo(monster);
+	std::wstring monsterName = stringTable->GetUni(monster->GetMonsterName(), Languages::KOR);
+	enemyName->text.setCharacterSize(40);
+	enemyName->text.setFillColor(sf::Color::Black);
+	enemyName->text.setString(monsterName);
+	enemyName->SetPosition(realHpBar->GetPosition().x, realHpBar->GetPosition().y-50);
+	enemyName->sortLayer = 212;
+	//enemyName->SetActive(true);
 }
 
 void SceneBattle::CatchPokemon(float dt)
 {
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F3))
+	if (!throwBall)
 	{
 		shakeBall->SetActive(true);
 		animation2.Play("ShakeBallEffect");
@@ -911,6 +956,7 @@ void SceneBattle::CatchPokemon(float dt)
 		
 		ballSpeed = 0.8f;
 		timer = 0.f;
+		throwBall = true;
 	}
 	if (shakeBall->GetActive())
 	{
@@ -962,6 +1008,7 @@ void SceneBattle::CatchPokemon(float dt)
 			effectEnemyBall->SetPosition(ballTopPos.x, ballTopPos.y + 50.f);
 			effectEnemyBall->SetOrigin(Origins::BC);
 			catchBoomEffect = true;
+			ballVelocity = {0,-250.f };//볼 속도 초기화 던질때마다.
 		}
 		if (!ballUp&&ballTopPos.y >= 100)
 		{
@@ -983,17 +1030,76 @@ void SceneBattle::CatchPokemon(float dt)
 				ballTop->SetActive(false);
 				ball->SetPosition(ballBottom->GetPosition());
 				ball->SetActive(true);
+				ballPos = ball->GetPosition();
 			}
 		}
 
 
 
 	}
-	if (ballEffectEnd)
+	if (ballEffectEnd&&bounceCount<5)
 	{
+		//ball->SetActive(false);
+		ballPos += ballVelocity*dt;
+		ballVelocity.y += ballGravity;
+		if (ballVelocity.y > 0 && !ballCountCheck)
+		{
+			ballCountCheck = true;
+			bounceCount++;
+			
+		}
+	}
+	if (ballCountCheck && ballPos.y >=380)
+	{
+		ballVelocity.y = -250.f * (5 - bounceCount) / 5;
+		ballCountCheck = false;
+		ballTopClock.restart();
+	}
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F6))
+	{
+		std::cout << ballPos.y << "," << -ballPos.y << std::endl;
+		std::cout << bounceCount << std::endl;
+	}
+	if (!shakeEffect&&ball->GetActive() && bounceCount == 5)
+	{
+		ballPos.y = ballBottom->GetPosition().y;
+		ball->SetActive(false);
 		
+		shakeEffect = true;
+		catchMonsterBall->SetActive(true);
+		catchMonsterBall->SetPosition(1695, 355);
+
+		
+		
+
+
+	}
+	ball->SetPosition(ballPos);
+
+	if (catchMonsterBall->GetActive()&& !shakeEffect && shakeCount < 2)
+	{
+		ballShakeClock.restart();
+		shakeCount++;
+		shakeEffect = true;
+	}
+
+
+
+
+
+	if (ballShakeClock.getElapsedTime() > sf::seconds(1.5f)&&shakeEffect)
+	{
+		//shakeBall->SetActive(true);
+		animation4.Play("ShakeBallEffect");
+		shakeEffect = false;
+	}
+	if (ballShakeClock.getElapsedTime() > sf::seconds(3.7f)&&shakeCount>=2)
+	{
+
+		CatchSuccess();
 	}
 	
+
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F4))
 	{
 		std::cout << shakeBall->sprite.getPosition().x << shakeBall->sprite.getPosition().y<< std::endl;
@@ -1004,6 +1110,18 @@ void SceneBattle::CatchPokemon(float dt)
 		ballNowPos = ballStartPos;
 		catchEffect = false;
 		//ballSpeed = 0.8f;
+	}
+}
+
+void SceneBattle::CatchSuccess()
+{
+	//성공
+	successBall->SetActive(true);
+	successBall->sprite.setPosition(1719, 379);
+	catchMonsterBall->SetActive(false);
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z))
+	{
+		BattleEnd();
 	}
 }
 
@@ -1154,6 +1272,15 @@ sf::Vector2f SceneBattle::CalculateOrbit(const sf::Vector2f& startPos, const sf:
 	return p;
 	
 }
+void SceneBattle::GoBackMenu()
+{
+	menuIndex = 0;
+	skillIndex = 0;
+	menuDisplay = false;
+	trigger1 = false;
+}
+
+
 /*sf::Vector2f Boss::BezierMove(const sf::Vector2f& pos0, const sf::Vector2f& pos1, const sf::Vector2f& pos2, float moveT)
 {
 	float u = 1.f - moveT;

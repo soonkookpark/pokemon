@@ -69,5 +69,6 @@ public:
 	Pokemons GetType() const;
 	int GetDamage();
 	sf::Vector2i GetImageRectSize();
+	std::string GetMonsterName();
 };
 
