@@ -12,8 +12,10 @@ class MonsterBallEffectGo;
 class SceneBattle : public Scene
 {
 protected:
-	AnimationController animation1;
-	AnimationController animation2;
+	AnimationController animation1;//내 몬스터가 튀어나오는 이펙트
+	AnimationController animation2;//몬스터볼 흔들리는 이펙트
+	AnimationController animation3;//상대 몬스터볼 이펙트
+
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::RectangleShape rect;
 	int enemySize = 56;
@@ -36,6 +38,8 @@ protected:
 	bool gameEnd = false;
 	bool catchEffect = false;
 	bool catchBoomEffect = false;
+	bool ballUp = false;
+	bool ballEffectEnd = false;
 	sf::Clock clock;
 	sf::Clock clock2;
 	sf::Clock ballClock;
@@ -86,9 +90,12 @@ protected:
 	SpriteGo* explainMenu = nullptr;
 	SpriteGo* effectBall = nullptr;
 	SpriteGo* shakeBall = nullptr;
+	SpriteGo* effectEnemyBall = nullptr;
 	SpriteGo* ballTop = nullptr;
 	SpriteGo* ballBottom = nullptr;
-	
+	SpriteGo* ball = nullptr;//몬스터볼에 몬스터가 들어왔을때의 볼
+
+
 	ObjectPool<Monster> PokemonPool;
 	Monster* monster;
 public:

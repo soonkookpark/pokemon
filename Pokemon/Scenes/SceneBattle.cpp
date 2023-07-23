@@ -44,11 +44,12 @@ void SceneBattle::Init()
 	//몬스터볼 위아래 이미지
 	ballTop = (SpriteGo*)AddGo(new SpriteGo("graphics/ThrowBallEffectMove.png", "BallTop"));
 	ballBottom = (SpriteGo*)AddGo(new SpriteGo("graphics/ThrowBallEffectMove.png", "BallBottom"));
+	ball = (SpriteGo*)AddGo(new SpriteGo("graphics/ThrowBallEffectMove.png", "Ball"));
 	//std::cout<<rect.getPosition().x << std::endl;
 	//몬스터볼 연출 효과
 	effectBall = (SpriteGo*)AddGo(new SpriteGo("","MonsterBallEffect"));
 	shakeBall = (SpriteGo*)AddGo(new SpriteGo("", "ShakeBallEffect"));
-	
+	effectEnemyBall = (SpriteGo*)AddGo(new SpriteGo("", "MonsterBallEffect"));
 	/*HpBar->sprite.setScale(0.f, 0.f);
 	RealHpBar->sprite.setScale(0.f, 0.f);
 	select->SetActive(false);
@@ -91,8 +92,10 @@ void SceneBattle::Init()
 
 	animation1.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/MonsterBallEffect.csv"));
 	animation2.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/ShakeBallEffect.csv"));
+	animation3.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/MonsterBallEffect.csv"));
 	animation1.SetTarget(&effectBall->sprite);
 	animation2.SetTarget(&shakeBall->sprite);
+	animation3.SetTarget(&effectEnemyBall->sprite);
 	for (auto go : gameObjects)
 	{
 		go->Init();
@@ -125,7 +128,7 @@ void SceneBattle::Enter()
 	selectIcon->SetActive(false);
 	menu->SetActive(false);
 	explainMenu->SetActive(false);
-	//몬스터볼에서 내 몬스터볼에서 나올때
+	//내 몬스터볼에서 나올때
 	effectBall->sprite.setPosition(267, 530);
 	effectBall->sprite.setScale(3.f, 3.f);
 	effectBall->sortLayer = 204;
@@ -139,7 +142,10 @@ void SceneBattle::Enter()
 	shakeBall->sortLayer = 222;
 	shakeBall->SetActive(false);
 	ballNowPos = shakeBall->GetPosition();
-
+	effectEnemyBall->sprite.setPosition(shakeBall->GetPosition());
+	effectEnemyBall->sprite.setScale(3.f, 3.f);
+	effectEnemyBall->sortLayer=205;
+	effectEnemyBall->SetActive(false);
 	//날라간 뒤 몬스터볼 이미지
 	sf::IntRect ballTopImageRect(0, 96, 16, 8);
 	ballTop->sprite.setTextureRect(ballTopImageRect);
@@ -154,9 +160,14 @@ void SceneBattle::Enter()
 	ballBottom->sprite.setScale(3.f, 3.f);
 	ballBottom->sortLayer = 223;
 	ballBottom->SetActive(false);
-
 	ballTopPos = { 1721, 378 };
 
+	sf::IntRect ballImageRect(0, 0, 16, 16);
+	ball->sprite.setTextureRect(ballImageRect);
+	ball->SetOrigin(Origins::MC);
+	ball->sprite.setScale(3.f, 3.f);
+	ball->sortLayer = 224;
+	ball->SetActive(false);
 
 	skillMessage1->SetActive(false);
 	skillMessage2->SetActive(false);
@@ -523,7 +534,7 @@ void SceneBattle::Update(float dt)
 	}*/
 	animation1.Update(dt);
 	animation2.Update(dt);
-
+	animation3.Update(dt);
 	//MoveCursorMenu();
 
 }
@@ -723,22 +734,22 @@ void SceneBattle::SelectMenu()
 	//MoveCursorMenu();
 
 	//if(INPUT_MGR.GetKeyUp(sf::Keyboard::Enter)){
-		switch (menuIndex)
-		{
-		case (int)Menu::Skill:
-			SkillSelect();
+	switch (menuIndex)
+	{
+	case (int)Menu::Skill:
+		SkillSelect();
 			
-			break;
-		case (int)Menu::Bag:
-			SkillSelect();
-			break;
-		case (int)Menu::Pokemon:
-			SkillSelect();
-			break;
-		case (int)Menu::Run:
-			BattleEnd();
-			break;
-		}
+		break;
+	case (int)Menu::Bag:
+		SkillSelect();
+		break;
+	case (int)Menu::Pokemon:
+		SkillSelect();
+		break;
+	case (int)Menu::Run:
+		BattleEnd();
+		break;
+	}
 	//}
 
 	
@@ -940,19 +951,49 @@ void SceneBattle::CatchPokemon(float dt)
 	if (!shakeBall->GetActive()&&catchEffect)
 	{
 		
-		ballTop->SetActive(true);
-		ballBottom->SetActive(true);
+		ballTop->SetPosition(ballTopPos);
+		ballBottom->SetPosition(1721, 375);
 		if (!catchBoomEffect)
 		{
-			effectBall->SetActive(true);
-			animation1.Play("MonsterBallEffect");
+			ballTop->SetActive(true);
+			ballBottom->SetActive(true);
+			effectEnemyBall->SetActive(true);
+			animation3.Play("MonsterBallEffect");
+			effectEnemyBall->SetPosition(ballTopPos.x, ballTopPos.y + 50.f);
+			effectEnemyBall->SetOrigin(Origins::BC);
 			catchBoomEffect = true;
 		}
-		ballTop->SetPosition(ballTopPos);
-		ballTopPos.y -= 0.3f;
-		ballBottom->SetPosition(1721, 375);
+		if (!ballUp&&ballTopPos.y >= 100)
+		{
+			ballTopPos.y -= 0.3f;
+			ballClock.restart();
+		}
+		if (ballTopPos.y < 100)
+		{
+			monster->SetActive(false);
+			ballUp = true;
+		}
+		if (!ballEffectEnd && ballClock.getElapsedTime() >= sf::seconds(0.5f))
+		{
+			ballTopPos.y += 0.4f;
+			if (ballTopPos.y >= ballBottom->GetPosition().y)
+			{
+				ballEffectEnd = true;
+				ballBottom->SetActive(false);
+				ballTop->SetActive(false);
+				ball->SetPosition(ballBottom->GetPosition());
+				ball->SetActive(true);
+			}
+		}
+
+
 
 	}
+	if (ballEffectEnd)
+	{
+		
+	}
+	
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F4))
 	{
 		std::cout << shakeBall->sprite.getPosition().x << shakeBall->sprite.getPosition().y<< std::endl;
