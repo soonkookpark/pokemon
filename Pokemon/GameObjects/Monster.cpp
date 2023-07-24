@@ -75,9 +75,14 @@ Monster::Pokemons Monster::GetType() const
 	return name;
 }
 
-int Monster::GetDamage()
+int Monster::GetDamage(int num)
 {
 	return power;
+}
+
+int Monster::GetMonsterHp()
+{
+	return maxHp;
 }
 
 sf::Vector2i Monster::GetImageRectSize()

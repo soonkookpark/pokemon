@@ -3,7 +3,7 @@ class AnimationController
 {
 
 protected:
-	std::unordered_map<std::string/*ID*/, AnimationClip> clips;
+	std::unordered_map<std::string/*ID*/, AnimationClip*> clips;
 	std::queue<std::string> queue; //애니메이션 큐.
 
 
@@ -23,7 +23,7 @@ protected:
 	sf::Sprite* target = nullptr;
 
 public:
-	void AddClip(const AnimationClip& newClip);
+	void AddClip(AnimationClip& newClip);
 	void SetTarget(sf::Sprite* sprite) { target = sprite; }
 	sf::Sprite* GetTarget() const { return target; }
 	bool IsPlaying() { return isPlaying; }

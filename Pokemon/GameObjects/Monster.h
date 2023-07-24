@@ -67,7 +67,8 @@ public:
 
 	void SetType(Pokemons t);
 	Pokemons GetType() const;
-	int GetDamage();
+	int GetMonsterHp();
+	int GetDamage(int num);
 	sf::Vector2i GetImageRectSize();
 	std::string GetMonsterName();
 };

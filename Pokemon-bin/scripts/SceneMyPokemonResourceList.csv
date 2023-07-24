@@ -1,0 +1,8 @@
+"RESOURCE_TYPES (0: 텍스쳐, 1: 폰트, 2: 사운드클럽, 3: 애니메이션 클립)",RESOURCE_PATH
+0,graphics/PokemonList.png
+0,graphics/User.png
+0,graphics/HpBar.png
+0,graphics/RealHpBar.png
+0,graphics/selectIcon.png
+0,graphics/menuBox.png
+0,graphics/ThrowBallEffectMove.png

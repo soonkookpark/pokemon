@@ -10,7 +10,7 @@ struct AnimationFrame
 {
 	std::string textureId;
 	sf::IntRect	texCoord;//floatRect도 있고 이놈도 있다.
-	std::function<void()> action/*= nullptr*/;//특정한 프레임이 시작할때 호출할 함수를 넣는거야 이건 그리고 초기화해야해.
+	//std::function<void()> action/*= nullptr*/;//특정한 프레임이 시작할때 호출할 함수를 넣는거야 이건 그리고 초기화해야해.
 };
 
 struct AnimationClip
@@ -21,5 +21,7 @@ struct AnimationClip
 	int fps;
 
 	bool LoadFromFile(const std::string path);
+
+	//AnimationClip(const AnimationClip& other) = delete;
 };
 

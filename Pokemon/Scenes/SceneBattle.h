@@ -18,6 +18,7 @@ protected:
 	AnimationController animation2;//몬스터볼 흔들리는 이펙트
 	AnimationController animation3;//상대 몬스터볼 이펙트
 	AnimationController animation4;//
+	AnimationController animation5;//
 
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::RectangleShape rect;
@@ -26,12 +27,16 @@ protected:
 	int userMosterSize = 48; // 유저 포켓몬 이미지
 	int bounceCount = 0;
 	int shakeCount = 0;
+	int enemyHpRate = 100;
+	int myHpRate = 100;
+
 	float timer = 0;
 	float myHp=100;
 	float enemyHp=100.f;
+	float enemyNowHp;
 	float ballSpeed=0;
 	const float gravity = 9.81f;
-	const float ballGravity = 0.3f;
+	const float ballGravity = 3.f;
 	const float throwAngle = 45.f;
 	//
 	//float enemyHpy = 100.f;
@@ -49,15 +54,20 @@ protected:
 	bool ballEffectEnd = false;
 	bool ballCountCheck = false;
 	bool shakeEffect = false;
+	bool catchTextPrint = false;
+	bool damageCheck = false;
+	bool catchFailEffectbool = false;
 
-	
 	sf::Clock clock;
 	sf::Clock clock2;
+	sf::Clock clock3;
 	sf::Clock ballClock;
 	sf::Clock ballTopClock;
 	sf::Clock ballShakeClock;
+	sf::Clock catchTextClock;
 	sf::Time interfaceTime = sf::seconds(3.f);
 	sf::Vector2f healthBar = { 3.54f*100,25.f  };
+	sf::Vector2f myHealthBar = { 3.54f * 100,25.f };
 	sf::Vector2f effectSize = { 50.f,50.f };
 	sf::Vector2f textFirstPos = { 896, 680.f };
 	sf::Vector2f selectFirstPos = { 820.f,688.f };
@@ -80,7 +90,7 @@ protected:
 	RectangleGo* recgo = nullptr;
 	RectangleGo* pokemonHealth = nullptr;
 	RectangleGo* fakeBox = nullptr;
-
+	RectangleGo* myPokemonHealth = nullptr;
 	
 	TextGo* menuText1 = nullptr;
 	TextGo* menuText2 = nullptr;
@@ -92,14 +102,19 @@ protected:
 	TextGo* skillMessage4 = nullptr;
 	TextGo* skillExplain = nullptr;
 	TextGo* skillText = nullptr;
-	TextGo* enemyName = nullptr;
-
+	TextGo* enemyName = nullptr;//상대 체력바 위에 표시되는 상대 포켓몬 이름
+	TextGo* catchMessage1 = nullptr;
+	TextGo* catchMessage2 = nullptr;
+	TextGo* catchPokemonName = nullptr;//텍스트박스에서 표시되는 상대 포켓몬이름
+	
 
 	//SpriteGo* list = nullptr;
 	SpriteGo* mymonster = nullptr;
 	SpriteGo* user = nullptr;
 	SpriteGo* HpBar = nullptr;
 	SpriteGo* realHpBar = nullptr;
+	SpriteGo* myHpBar = nullptr;
+	SpriteGo* myRealHpBar = nullptr;
 	SpriteGo* selectIcon = nullptr;
 	SpriteGo* menu = nullptr;
 	SpriteGo* explainMenu = nullptr;
@@ -107,10 +122,12 @@ protected:
 	SpriteGo* shakeBall = nullptr;
 	SpriteGo* effectEnemyBall = nullptr;
 	SpriteGo* catchMonsterBall = nullptr;
+	SpriteGo* catchFailEffect = nullptr;
 	SpriteGo* ballTop = nullptr;
 	SpriteGo* ballBottom = nullptr;
 	SpriteGo* ball = nullptr;//몬스터볼에 몬스터가 들어왔을때의 볼
 	SpriteGo* successBall = nullptr;
+	SpriteGo* catchTextMenu = nullptr;
 
 
 	ObjectPool<Monster> PokemonPool;
@@ -149,10 +166,18 @@ public:
 	void MeetMonster();
 	void CatchPokemon(float dt);
 	void CatchSuccess();
+	void CatchFail();
 	/*float MoveUpBallTop(float dt);
 	float MoveDownBallTop(float dt);*/
-	sf::Vector2f CalculateOrbit(const sf::Vector2f& startPos, const sf::Vector2f& highPos, const sf::Vector2f& endPos,float moveT);
 	void GoBackMenu();
+	void CatchText();
+	void CatchSuccessText();
+	void CatchFailedText();
+	void EnemyMonsterHp(float dt);
+	void MyMonsterHp(float dt);
+	
+	// 상대 스킬 선택
+	sf::Vector2f CalculateOrbit(const sf::Vector2f& startPos, const sf::Vector2f& highPos, const sf::Vector2f& endPos,float moveT);
 };
 
 template<typename T>

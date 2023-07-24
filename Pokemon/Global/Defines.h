@@ -63,6 +63,7 @@ enum class SceneId
 	Title,
 	Game,
 	Battle,
+	MyPokemon,
 	Count,
 };
 

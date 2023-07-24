@@ -3,6 +3,7 @@
 #include "SceneTitle.h"
 #include "SceneGame.h"
 #include "SceneBattle.h"
+#include "SceneMyPokemon.h"
 #include "DataTableMgr.h"
 #include "StringTable.h"
 
@@ -16,6 +17,7 @@ void SceneMgr::Init()
 	scenes.push_back(new SceneTitle());
 	scenes.push_back(new SceneGame());
 	scenes.push_back(new SceneBattle());
+	scenes.push_back(new SceneMyPokemon());
 
 	for (auto scene : scenes)
 	{
