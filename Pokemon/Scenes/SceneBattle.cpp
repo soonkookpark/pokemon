@@ -1069,9 +1069,22 @@ void SceneBattle::CatchPokemon(float dt)
 	}
 	if (ballShakeClock.getElapsedTime() > sf::seconds(3.7f)&&shakeCount>=2)
 	{
-
-		//CatchSuccess();
-		CatchFail();
+		if (!catchCheck)
+		{
+			randomNum = Utils::RandomRange(1, 100);
+		}
+		if(randomNum<99)
+		{
+			catchCheck = true;
+			CatchFail();
+			
+		}
+		else if(randomNum>=99)
+		{
+			catchCheck = true;
+			CatchSuccess();
+			
+		}
 	}
 	
 
@@ -1095,10 +1108,14 @@ void SceneBattle::CatchSuccess()
 	successBall->SetActive(true);
 	successBall->sprite.setPosition(1719, 379);
 	catchMonsterBall->SetActive(false);
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z))
-	{
-		BattleEnd();
-	}
+	
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z))
+		{
+			BattleEnd();
+		}
+
+	
+		
 }
 
 //float SceneBattle::MoveUpBallTop(float dt)
@@ -1276,6 +1293,7 @@ void SceneBattle::GoBackMenu()
 	shakeCount = 0;
 	catchFailEffect->SetActive(false);
 	catchFailEffectbool = false;
+	catchCheck = false;
 }
 
 void SceneBattle::CatchText()
@@ -1359,17 +1377,17 @@ void SceneBattle::EnemyMonsterHp(float dt)
 	switch (skillIndex)
 	{
 	case 0:
-		damage = 80;
+		damage = 70;
 		
 		break;
 	case 1:
 		damage = 50;
 		break;
 	case 2:
-		damage = 50;
+		damage = 25;
 		break;
 	case 3:
-		damage = 50;
+		damage = 90;
 		break;
 
 	}
