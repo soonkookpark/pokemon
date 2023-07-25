@@ -55,7 +55,7 @@ void Monster::SetType(Pokemons t)
 	maxHp = info.maxHp;
 	power = info.power;
 	catchRate = info.catchRate;
-	//meetRate = info.rate;
+	speed = info.speed;
 	skill1 = info.skill1;
 	skillDamage1 = info.skillDamage1;
 	pp1 = info.pp1;
@@ -75,7 +75,7 @@ Monster::Pokemons Monster::GetType() const
 	return name;
 }
 
-int Monster::GetDamage(int num)
+int Monster::GetPower(int num)
 {
 	return power;
 }
@@ -95,4 +95,40 @@ std::string Monster::GetMonsterName()
 	return monName;
 }
 
+std::string Monster::GetSkillName(int n)
+{
+	switch (n)
+	{
+	case 0:
+		return skill1;
+		break;
+	case 1:
+		return skill2;
+		break;
+	case 2:
+		return skill3;
+		break;
+	case 3:
+		return skill4;
+		break;
+	}
+}
+int Monster::GetSkillDamage(int n)
+{
+	switch (n)
+	{
+	case 0:
+		return skillDamage1;
+		break;
+	case 1:
+		return skillDamage2;
+		break;
+	case 2:
+		return skillDamage3;
+		break;
+	case 3:
+		return skillDamage4;
+		break;
+	}
+}
 

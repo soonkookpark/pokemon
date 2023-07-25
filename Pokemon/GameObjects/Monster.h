@@ -38,7 +38,7 @@ protected:
 	int hp = 0;
 	int power = 0;
 	float catchRate = 0;
-	//float meetRate = 0;
+	int speed = 0;
 	std::string skill1;
 	int skillDamage1=0;
 	int pp1=0;
@@ -68,8 +68,11 @@ public:
 	void SetType(Pokemons t);
 	Pokemons GetType() const;
 	int GetMonsterHp();
-	int GetDamage(int num);
+	int GetPower(int num);
 	sf::Vector2i GetImageRectSize();
 	std::string GetMonsterName();
+	std::string GetSkillName(int n);
+	int GetSkillDamage(int n);
+	//sf::Vector2f GetMyPokemonRect();
 };
 

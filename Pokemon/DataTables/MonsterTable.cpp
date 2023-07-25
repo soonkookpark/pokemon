@@ -16,7 +16,7 @@ bool MonsterTable::Load()
 	auto maxHp = doc.GetColumn<float>(4);
 	auto power = doc.GetColumn<int>(5);
 	auto catchRate = doc.GetColumn<float>(6);
-	//auto meetRate = doc.GetColumn<float>(8);
+	auto speed = doc.GetColumn<int>(7);
 	auto skill1 = doc.GetColumn<std::string>(9);
 	auto skillDamage1 = doc.GetColumn<int>(10);
 	auto pp1 = doc.GetColumn<int>(11);
@@ -34,7 +34,7 @@ bool MonsterTable::Load()
 	{
 		MonsterInfo mInfo
 		{
-			(Monster::Pokemons)ids[i],name[i],imagePosX[i],imagePosY[i],maxHp[i],power[i],catchRate[i]/*,meetRate[i]*/,skill1[i],skillDamage1[i],pp1[i],skill2[i],skillDamage2[i],pp2[i],skill3[i],skillDamage3[i],pp3[i],skill4[i],skillDamage4[i],pp4[i]
+			(Monster::Pokemons)ids[i],name[i],imagePosX[i],imagePosY[i],maxHp[i],power[i],catchRate[i],speed[i],skill1[i],skillDamage1[i],pp1[i],skill2[i],skillDamage2[i],pp2[i],skill3[i],skillDamage3[i],pp3[i],skill4[i],skillDamage4[i],pp4[i]
 		};
 		table.insert({ (Monster::Pokemons)ids[i] , mInfo });
 	}

@@ -78,15 +78,20 @@ protected:
 	sf::Vector2f ballTopPos;
 	sf::Vector2f ballPos;
 	sf::Vector2f ballVelocity;
+	sf::Vector2f fakeBoxScale = { 1235.f,490.f };
+	sf::Vector2f fakeBoxPos = { 685.f,590.f };
+	sf::Vector2f myPokemonRect;
 
 	int menuIndex = 0;
 	int skillIndex = 0;
-	float damage = 150.f;
+	int myDamage = 150;
+	int mySkillDamage1;
+	int mySkillDamage2;
+	int mySkillDamage3;
+	int mySkillDamage4;
 	int randomNum = 0; //= Utils::RandomRange(1, 100);
 	int iNum = 0;
 	int jNum = 0;
-	sf::Vector2f fakeBoxScale = { 1235.f,490.f };
-	sf::Vector2f fakeBoxPos = { 685.f,590.f };
 
 	RectangleGo* recgo = nullptr;
 	RectangleGo* pokemonHealth = nullptr;
@@ -107,6 +112,7 @@ protected:
 	TextGo* catchMessage1 = nullptr;
 	TextGo* catchMessage2 = nullptr;
 	TextGo* catchPokemonName = nullptr;//텍스트박스에서 표시되는 상대 포켓몬이름
+	TextGo* myPokemonName = nullptr;
 	
 
 	//SpriteGo* list = nullptr;
@@ -130,7 +136,12 @@ protected:
 	SpriteGo* successBall = nullptr;
 	SpriteGo* catchTextMenu = nullptr;
 
-
+	std::wstring useskill;
+	std::wstring useskill1;
+	std::wstring useskill2;
+	std::wstring useskill3;
+	std::wstring useskill4;
+	std::wstring myName;
 	ObjectPool<Monster> PokemonPool;
 	Monster* monster;
 
@@ -176,7 +187,9 @@ public:
 	void CatchFailedText();
 	void EnemyMonsterHp(float dt);
 	void MyMonsterHp(float dt);
-	
+	void ChangeMyPokemon();
+	void ChangeMyPokemonSkill();
+
 	// 상대 스킬 선택
 	sf::Vector2f CalculateOrbit(const sf::Vector2f& startPos, const sf::Vector2f& highPos, const sf::Vector2f& endPos,float moveT);
 };

@@ -82,8 +82,51 @@ void SceneBattle::Init()
 	catchMessage1 = (TextGo*)AddGo(new TextGo("CatchMessage1", "fonts/DOSPilgi.ttf"));
 	catchMessage2 = (TextGo*)AddGo(new TextGo("CatchMessage2", "fonts/DOSPilgi.ttf"));
 	catchPokemonName = (TextGo*)AddGo(new TextGo("CatchPokemonName", "fonts/DOSPilgi.ttf"));
+	myPokemonName = (TextGo*)AddGo(new TextGo("MyPokemonName", "fonts/GANGWONSTATE.ttf"));
+	myName = stringTable->GetUni("Pikachu", Languages::KOR);
+	myPokemonName->text.setCharacterSize(50);
+	myPokemonName->text.setString(myName);
+	myPokemonName->text.setFillColor(sf::Color::Black);
+	myPokemonName->SetOrigin(Origins::TL);
+	myPokemonName->SetPosition(128,745);
+	myPokemonName->sortLayer = 207;
+	//최초 내 포켓몬
+	myPokemonRect = { 12,2 };
+	sf::IntRect myMonsterImageRect(9 + (57 * myPokemonRect.x), 140 + (188 * myPokemonRect.y), userMosterSize, userMosterSize);
+	mymonster->sprite.setTextureRect(myMonsterImageRect);
+	mymonster->sprite.setPosition(180, 428);
+	mymonster->SetOrigin(Origins::TL);
+	mymonster->sprite.setScale(6.5f, 6.5f);
+	mymonster->sortLayer = 204;
+	mymonster->SetActive(false);
+
 	
+	HpBar->SetOrigin(Origins::TL);
+	HpBar->sprite.setScale(1.f, 3.f);
+	HpBar->SetPosition(186, 95);
+	HpBar->sortLayer = 201;
+	HpBar->SetActive(false);
 	
+	realHpBar->SetOrigin(Origins::TL);
+	realHpBar->sprite.setScale(1.2f, 2.f);
+	realHpBar->SetPosition(336, 95);
+	realHpBar->sortLayer = 202;
+	realHpBar->SetActive(false);
+	enemyName->SetActive(false);
+
+	useskill1 = stringTable->GetUni("THUNDER", Languages::KOR);
+	useskill2 = stringTable->GetUni("SPEED_ATTACK", Languages::KOR);
+	useskill3 = stringTable->GetUni("TENMILLIONBOLT", Languages::KOR);
+	useskill4 = stringTable->GetUni("IRONTAIL", Languages::KOR);
+	
+	mySkillDamage1=110;
+	mySkillDamage2=60;
+	mySkillDamage3=70;
+	mySkillDamage4=85;
+
+
+
+
 	fakeBox = (RectangleGo*)AddGo(new RectangleGo(fakeBoxScale, "fakeBox"));
 	
 	PokemonPool.OnCreate = [this](Monster* pokemon)
@@ -97,7 +140,7 @@ void SceneBattle::Init()
 		pokemon->sprite.setTextureRect(monsterImageRect);
 		pokemon->sprite.setScale(6.5f, 6.5f);
 		pokemon->sortLayer = 204;
-
+		
 	};
 	PokemonPool.Init();
 
@@ -133,6 +176,8 @@ void SceneBattle::Release()
 
 void SceneBattle::Enter()
 {
+	myPokemonName->text.setString(myName);
+	myPokemonName->SetActive(false);
 	enemyHpRate = 100;
 	myHpRate = 100;
 	auto size = FRAMEWORK.GetWindowSize();
@@ -263,7 +308,7 @@ void SceneBattle::Enter()
 
 	//내 몬스터
 	//SpriteGo* mymonster = (SpriteGo*)FindGo("myMonster");
-	sf::IntRect myMonsterImageRect(693, 516, userMosterSize, userMosterSize);
+	sf::IntRect myMonsterImageRect(9 + (57 * myPokemonRect.x), 140 + (188 * myPokemonRect.y), userMosterSize, userMosterSize);
 	mymonster->sprite.setTextureRect(myMonsterImageRect);
 	mymonster->sprite.setPosition(180, 428);
 	mymonster->SetOrigin(Origins::TL);
@@ -409,7 +454,7 @@ void SceneBattle::Update(float dt)
 	{
 		std::cout << "적 총 체력: " << enemyHp << std::endl;
 		std::cout << "적 현재 체력: " << enemyNowHp << std::endl;
-		std::cout << "내 공격 데미지: " << damage << std::endl;
+		std::cout << "내 공격 데미지: " << myDamage << std::endl;
 		std::cout << "계산된 체력 비율: " << enemyNowHp / enemyHp << std::endl;
 		std::cout << "체력 비율: " << enemyHpRate << std::endl;
 	}
@@ -500,6 +545,7 @@ void SceneBattle::Update(float dt)
 		if (!effectBall->GetActive())
 		{
 			mymonster->SetActive(true);
+			myPokemonName->SetActive(true);
 		}
 		//-----------------------여기까지가 몬스터 출현 셋팅
 		if (mymonster->GetActive())
@@ -765,34 +811,34 @@ void SceneBattle::SkillSelect()
 
 	
 		//TextGo* menuText1 = (TextGo*)FindGo("menuMessage1");
-		std::wstring skill1 = stringTable->GetUni("THUNDER", Languages::KOR);
+		//std::wstring skill1 = stringTable->GetUni("THUNDER", Languages::KOR);
 		menuText1->text.setCharacterSize(70);
-		menuText1->text.setString(skill1);
+		menuText1->text.setString(useskill1);
 		menuText1->text.setFillColor(sf::Color::Black);
 		menuText1->SetOrigin(Origins::TL);
 		menuText1->SetPosition(textFirstPos);
 		menuText1->sortLayer = 207;
 
 		//TextGo* menuText2 = (TextGo*)FindGo("menuMessage2");
-		std::wstring skill2 = stringTable->GetUni("SPEED_ATTACK", Languages::KOR);
+		//std::wstring skill2 = stringTable->GetUni("SPEED_ATTACK", Languages::KOR);
 		menuText2->text.setCharacterSize(70);
-		menuText2->text.setString(skill2);
+		menuText2->text.setString(useskill2);
 		menuText2->text.setFillColor(sf::Color::Black);
 		menuText2->SetOrigin(Origins::TL);
 		menuText2->SetPosition(textFirstPos.x + 454, textFirstPos.y);
 		menuText2->sortLayer = 207;
 		//TextGo* menuText3 = (TextGo*)FindGo("menuMessage3");
-		std::wstring skill3 = stringTable->GetUni("TENMILLIONBOLT", Languages::KOR);
+		//std::wstring skill3 = stringTable->GetUni("TENMILLIONBOLT", Languages::KOR);
 		menuText3->text.setCharacterSize(70);
-		menuText3->text.setString(skill3);
+		menuText3->text.setString(useskill3);
 		menuText3->text.setFillColor(sf::Color::Black);
 		menuText3->SetOrigin(Origins::TL);
 		menuText3->SetPosition(textFirstPos.x, textFirstPos.y + 170);
 		menuText3->sortLayer = 207;
 		//TextGo* menuText4 = (TextGo*)FindGo("menuMessage4");
-		std::wstring skill4 = stringTable->GetUni("IRONTAIL", Languages::KOR);
+		//std::wstring skill4 = stringTable->GetUni("IRONTAIL", Languages::KOR);
 		menuText4->text.setCharacterSize(70);
-		menuText4->text.setString(skill4);
+		menuText4->text.setString(useskill4);
 		menuText4->text.setFillColor(sf::Color::Black);
 		menuText4->SetOrigin(Origins::TL);
 		menuText4->SetPosition(textFirstPos.x + 454, textFirstPos.y + 170);
@@ -854,7 +900,7 @@ void SceneBattle::SkillExplain(int n)
 	explainMenu->sprite.setScale(1.5f, 1.38f);
 	explainMenu->SetPosition(900, 600);
 	explainMenu->sortLayer = 211;
-	std::wstring useskill;
+	
 	//TextGo* skillExplain = (TextGo*)FindGo("SkillExplain");
 	std::wstring skill= stringTable->GetUni("SKILLEXPLAIN", Languages::KOR);
 	skillExplain->text.setCharacterSize(40);
@@ -864,24 +910,25 @@ void SceneBattle::SkillExplain(int n)
 	skillExplain->SetPosition(973,678);
 	skillExplain->sortLayer = 212;
 	skillExplain->SetActive(menu->GetActive());
+	skillText->text.setCharacterSize(80);
+	
 	switch (n)
 	{
 	case 0:
-		useskill = stringTable->GetUni("THUNDER", Languages::KOR);
+		useskill = useskill1;
 		break;
 	case 1:
-		useskill = stringTable->GetUni("SPEED_ATTACK", Languages::KOR);
+		useskill = useskill2;
 		break;
 	case 2:
-		useskill = stringTable->GetUni("TENMILLIONBOLT", Languages::KOR);
+		useskill = useskill3;
 		break;
 	case 3:
-		useskill = stringTable->GetUni("IRONTAIL", Languages::KOR);
+		useskill = useskill4;
 		break;
 	}
 	//TextGo* skillText = (TextGo*)FindGo("SkillText");
-	if(n)
-	skillText->text.setCharacterSize(80);
+	//if(n)
 	skillText->text.setFillColor(sf::Color::Black);
 	skillText->text.setString(useskill);
 	skillText->SetOrigin(Origins::TL);
@@ -1073,13 +1120,13 @@ void SceneBattle::CatchPokemon(float dt)
 		{
 			randomNum = Utils::RandomRange(1, 100);
 		}
-		if(randomNum<99)
+		if(randomNum<10)
 		{
 			catchCheck = true;
 			CatchFail();
 			
 		}
-		else if(randomNum>=99)
+		else if(randomNum>=10)
 		{
 			catchCheck = true;
 			CatchSuccess();
@@ -1108,27 +1155,16 @@ void SceneBattle::CatchSuccess()
 	successBall->SetActive(true);
 	successBall->sprite.setPosition(1719, 379);
 	catchMonsterBall->SetActive(false);
-	
-		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z))
-		{
-			BattleEnd();
-		}
+	ChangeMyPokemon();
+	ChangeMyPokemonSkill();
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z))
+	{
+		BattleEnd();
+	}
 
 	
 		
 }
-
-//float SceneBattle::MoveUpBallTop(float dt)
-//{
-//	
-//	return 0;
-//}
-//
-//float SceneBattle::MoveDownBallTop(float dt)
-//{
-//	return 0;
-//}
-
 
 void SceneBattle::MoveCursorMenu()
 {
@@ -1185,10 +1221,7 @@ void SceneBattle::MoveCursorMenu()
 			menuIndex--;
 		}
 	}
-	/*if (INPUT_MGR.GetKeyUp(sf::Keyboard::Enter))
-	{
-		return menuIndex;
-	}*/
+	
 }
 
 void SceneBattle::MoveCursorSkill()
@@ -1246,10 +1279,7 @@ void SceneBattle::MoveCursorSkill()
 			skillIndex--;
 		}
 	}
-	/*if (INPUT_MGR.GetKeyDown(sf::Keyboard::Enter))
-	{
-		return skillIndex;
-	}*/
+	
 }
 
 sf::Vector2f SceneBattle::CalculateOrbit(const sf::Vector2f& startPos, const sf::Vector2f& highPos, const sf::Vector2f& endPos, float moveT)
@@ -1377,17 +1407,16 @@ void SceneBattle::EnemyMonsterHp(float dt)
 	switch (skillIndex)
 	{
 	case 0:
-		damage = 70;
-		
+		myDamage = mySkillDamage1;
 		break;
 	case 1:
-		damage = 50;
+		myDamage = mySkillDamage2;
 		break;
 	case 2:
-		damage = 25;
+		myDamage = mySkillDamage3;
 		break;
 	case 3:
-		damage = 90;
+		myDamage = mySkillDamage4;
 		break;
 
 	}
@@ -1396,24 +1425,19 @@ void SceneBattle::EnemyMonsterHp(float dt)
 	{
 		if (enemyHp == enemyNowHp)
 		{
-			enemyNowHp = enemyHp - damage;
+			enemyNowHp = enemyHp - myDamage;
 		}
 		else {
-			enemyNowHp = enemyNowHp - damage;
+			enemyNowHp = enemyNowHp - myDamage;
 		}
 		damageCheck = true;
 	}
 	if (enemyHpRate <= 0)
 	{
-		damage = 0;
+		myDamage = 0;
 		enemyNowHp = 0;
 	}
-	/*else {
-		damage = 150;
-	}*/
-	//enemyHpRate -= damage * dt;
 	
-
 	if ((enemyNowHp/enemyHp)*100 <= enemyHpRate&& ballTopClock.getElapsedTime()>sf::seconds(0.02f))
 	{
 		enemyHpRate -= enemyHpRate*dt;
@@ -1496,6 +1520,27 @@ void SceneBattle::CatchFailedText()
 	{
 		GoBackMenu();
 	}
+}
+
+void SceneBattle::ChangeMyPokemon()
+{
+	myPokemonRect.x = monster->GetImageRectSize().x;
+	myPokemonRect.y = monster->GetImageRectSize().y;
+	myName = stringTable->GetUni(monster->GetMonsterName(), Languages::KOR);
+	//myPokemonName->text.setString(myName);
+
+}
+
+void SceneBattle::ChangeMyPokemonSkill()
+{
+	useskill1 = stringTable->GetUni(monster->GetSkillName(0), Languages::KOR);
+	useskill2 = stringTable->GetUni(monster->GetSkillName(1), Languages::KOR);
+	useskill3 = stringTable->GetUni(monster->GetSkillName(2), Languages::KOR);
+	useskill4 = stringTable->GetUni(monster->GetSkillName(3), Languages::KOR);
+	mySkillDamage1 = monster->GetSkillDamage(0);
+	mySkillDamage2 = monster->GetSkillDamage(1);
+	mySkillDamage3 = monster->GetSkillDamage(2);
+	mySkillDamage4 = monster->GetSkillDamage(3);
 }
 
 void SceneBattle::MyMonsterHp(float dt)

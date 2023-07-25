@@ -11,7 +11,7 @@ struct MonsterInfo
     float maxHp;
     int power;
     float catchRate;
-    //float rate;
+    int speed;
     std::string skill1;
     int skillDamage1;
     int pp1;
