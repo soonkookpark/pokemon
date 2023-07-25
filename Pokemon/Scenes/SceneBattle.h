@@ -57,7 +57,6 @@ protected:
 	bool catchTextPrint = false;
 	bool damageCheck = false;
 	bool catchFailEffectbool = false;
-	bool catchCheck = false;
 
 	sf::Clock clock;
 	sf::Clock clock2;
