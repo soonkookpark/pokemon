@@ -27,18 +27,34 @@ protected:
 	int userMosterSize = 48; // 유저 포켓몬 이미지
 	int bounceCount = 0;
 	int shakeCount = 0;
-	int enemyHpRate = 100;
+	float enemyHpRate = 100;
 	int myHpRate = 100;
+	int mySpeed = 120;
+	int enemyAttack;
+
+	int menuIndex = 0;
+	int skillIndex = 0;
+	int myDamage = 150;
+	int mySkillDamage1;
+	int mySkillDamage2;
+	int mySkillDamage3;
+	int mySkillDamage4;
+	int randomNum = 0; //= Utils::RandomRange(1, 100);
+	int iNum = 0;
+	int jNum = 0;
+	int enemyDamage = 0;
+
 
 	float timer = 0;
-	float myHp=100;
+	float myHp=198;
+	float myNowHp;
 	float enemyHp=100.f;
 	float enemyNowHp;
 	float ballSpeed=0;
 	const float gravity = 9.81f;
 	const float ballGravity = 3.f;
 	const float throwAngle = 45.f;
-	//
+	
 	//float enemyHpy = 100.f;
 	bool listMove = false;
 	bool userMove = false;
@@ -58,6 +74,14 @@ protected:
 	bool damageCheck = false;
 	bool catchFailEffectbool = false;
 	bool catchCheck = false;
+	bool ImAlive = false;
+	bool enemyAlive = false;
+	bool skillSelectCheck = false;
+	bool enemyTurn = false;
+	bool myTurn = false;
+	bool enemyDamageCheck = false;
+	bool enemySkillExplainFinish = false;
+	bool enemyAttackend = false;
 
 	sf::Clock clock;
 	sf::Clock clock2;
@@ -66,6 +90,7 @@ protected:
 	sf::Clock ballTopClock;
 	sf::Clock ballShakeClock;
 	sf::Clock catchTextClock;
+	sf::Clock failClock;
 	sf::Time interfaceTime = sf::seconds(3.f);
 	sf::Vector2f healthBar = { 3.54f*100,25.f  };
 	sf::Vector2f myHealthBar = { 3.54f * 100,25.f };
@@ -82,16 +107,6 @@ protected:
 	sf::Vector2f fakeBoxPos = { 685.f,590.f };
 	sf::Vector2f myPokemonRect;
 
-	int menuIndex = 0;
-	int skillIndex = 0;
-	int myDamage = 150;
-	int mySkillDamage1;
-	int mySkillDamage2;
-	int mySkillDamage3;
-	int mySkillDamage4;
-	int randomNum = 0; //= Utils::RandomRange(1, 100);
-	int iNum = 0;
-	int jNum = 0;
 
 	RectangleGo* recgo = nullptr;
 	RectangleGo* pokemonHealth = nullptr;
@@ -135,6 +150,7 @@ protected:
 	SpriteGo* ball = nullptr;//몬스터볼에 몬스터가 들어왔을때의 볼
 	SpriteGo* successBall = nullptr;
 	SpriteGo* catchTextMenu = nullptr;
+	SpriteGo* enemyExplainMenu = nullptr;
 
 	std::wstring useskill;
 	std::wstring useskill1;
@@ -142,6 +158,7 @@ protected:
 	std::wstring useskill3;
 	std::wstring useskill4;
 	std::wstring myName;
+	std::wstring enemySkill;
 	ObjectPool<Monster> PokemonPool;
 	Monster* monster;
 
@@ -172,24 +189,26 @@ public:
 	void MenuText();
 	void SkillSelect();
 	void SkillExplain(int n);
+	void EnemySkillExplain(int n);
 	
 	//void Bag();
 	void BattleEnd();
 	void MeetMonster();
 	void CatchPokemon(float dt);
 	void CatchSuccess();
-	void CatchFail();
+	void CatchFail(float dt);
 	/*float MoveUpBallTop(float dt);
 	float MoveDownBallTop(float dt);*/
 	void GoBackMenu();
 	void CatchText();
 	void CatchSuccessText();
-	void CatchFailedText();
+	void CatchFailedText(float dt);
 	void EnemyMonsterHp(float dt);
 	void MyMonsterHp(float dt);
 	void ChangeMyPokemon();
 	void ChangeMyPokemonSkill();
-
+	void BattleTurnDecision(float dt);
+	void BattleLose();
 	// 상대 스킬 선택
 	sf::Vector2f CalculateOrbit(const sf::Vector2f& startPos, const sf::Vector2f& highPos, const sf::Vector2f& endPos,float moveT);
 };

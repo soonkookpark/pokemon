@@ -1,6 +1,6 @@
 ID,KOREAN
 ATTACK,공격
-BAG,가방
+BAG,몬스터볼
 POKEMON,포켓몬
 RUN,도망간다
 THUNDER,번개
@@ -21,8 +21,8 @@ CATCH1,당신은 가방에서 몬스터볼을 꺼내
 CATCH2,상대 포켓몬에게 사용했다!
 CATCHFINISH1,신난다! 야생의 
 CATCHFINISH2,을(를) 붙잡았다!
-CATCHFAILED1,아쉽다! 조금만 더하면
-CATCHFAILED2,잡을 수 있었는데!!!
+CATCHFAILED1,아쉽다! 조금만 더하면 잡을 수 있었는데!!!
+CATCHFAILED2,야생의 포켓몬은 도망갔다!
 TACKLE,몸통박치기
 FASTATTACK,신속
 PSYCHICATTACK,염동력
@@ -41,3 +41,4 @@ BITE,물기
 FIREATTACK,화염방사
 LASER,파괴광선
 GRASSATTACK,덩쿨채찍
+ENEMYSKILLEXPLAIN,야생의 포켓몬이 기술을 사용했다!

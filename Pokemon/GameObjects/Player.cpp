@@ -83,6 +83,10 @@ void Player::Update(float dt)
 	if (!playerCanMove) 
 	{
 		speed = 500.f;
+		if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left))
+		{
+			//direction.x = 
+		}
 		direction.x = INPUT_MGR.GetAxis(Axis::Horizontal);
 		direction.y = INPUT_MGR.GetAxis(Axis::Vertical);
 	}
@@ -132,6 +136,7 @@ void Player::Update(float dt)
 		position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
 	}
 	position += direction*speed * dt;
+
 	SetPosition(position);
 	
 	/*SetPosition(position);*/

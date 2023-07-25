@@ -75,7 +75,7 @@ Monster::Pokemons Monster::GetType() const
 	return name;
 }
 
-int Monster::GetPower(int num)
+int Monster::GetPower()
 {
 	return power;
 }
@@ -112,6 +112,10 @@ std::string Monster::GetSkillName(int n)
 		return skill4;
 		break;
 	}
+}
+int Monster::GetSpeed()
+{
+	return speed;
 }
 int Monster::GetSkillDamage(int n)
 {

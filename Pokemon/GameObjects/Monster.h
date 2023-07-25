@@ -68,11 +68,12 @@ public:
 	void SetType(Pokemons t);
 	Pokemons GetType() const;
 	int GetMonsterHp();
-	int GetPower(int num);
+	int GetPower();
 	sf::Vector2i GetImageRectSize();
 	std::string GetMonsterName();
 	std::string GetSkillName(int n);
 	int GetSkillDamage(int n);
+	int GetSpeed();
 	//sf::Vector2f GetMyPokemonRect();
 };
 

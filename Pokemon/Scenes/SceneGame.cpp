@@ -31,18 +31,18 @@ void SceneGame::Init() // 안바뀔거면 여기
 	player->SetSceneGame(this);
 	player->sortLayer = 1;
 	player->sprite.setScale(1.f, 1.f);
-	
-	
 	groundBounds = tileMap->vertexArray.getBounds();
 	groundBounds.width -= (tileMap->TileSize().x * 2.f-150.f);
 	groundBounds.height -= (tileMap->TileSize().y * 2.f-150.f);
 	groundBounds.left += (tileMap->TileSize().x-75.f);
 	groundBounds.top += (tileMap->TileSize().y-75.f);
-	std::cout << groundBounds.height <<","<<
+	player->SetWallBounds(groundBounds);
+	
+	
+	/*std::cout << groundBounds.height <<","<<
 		groundBounds.left << "," <<
 		groundBounds.top << "," <<
-		groundBounds.width << std::endl;
-	player->SetWallBounds(groundBounds);
+		groundBounds.width << std::endl;*/
 	
 	//gpt
 	RectangleGo* rect = (RectangleGo*)AddGo(new RectangleGo(rectSize,"FadeOut"));
@@ -129,10 +129,10 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 
 	uiView.setSize(size);
 	uiView.setCenter(size * 0.5f);
-	if (playerPos != sf::Vector2f{18.5 * 150, 39.5 * 150})
+	/*if (playerPos != sf::Vector2f{18.5 * 150, 39.5 * 150})
 	{
 		player->SetPosition(playerPos);
-	}
+	}*/
 	if (playerPos == sf::Vector2f{0, 0})
 	{
 		player->SetPosition({ 18.5 * 150, 39.5 * 150 });
@@ -290,6 +290,7 @@ void SceneGame::CheckCollide(float dt)
 						player->ChangePlayerMove();
 					} */
 					std::cout << "0여기 왔다." << std::endl;
+					//battleNow = false;
 				}
 				if (!battleNow) {
 					if (player->GetPlayerMove())
@@ -298,30 +299,12 @@ void SceneGame::CheckCollide(float dt)
 					}
 				}
 						
-				/*worldView.setRotation(180.f);*/
-
-				//if (!magnitudeScene && magnitudeTime < clock.getElapsedTime())
-				//{
-				//	worldView.setRotation(20.f);
-				//	//sf::sleep(sf::seconds(0.2f));
-				//	//std::cout << "2여기 왔다." << std::endl;
-				//}
-				//if (magnitudeScene && magnitudeTime < clock.getElapsedTime())
-				//{
-				//	worldView.setRotation(-20.f);
-				//	//sf::sleep(sf::seconds(0.2f));
-				//	//std::cout << "3여기 왔다." << std::endl;
-				//}
-				//
-				//worldView.setRotation(0.f);
-				//magnitudeScene = !magnitudeScene;
+				
 
 
 			}
 				
-			/*if ((tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y) != 30)
-			{*/
-			//}
+			
 				
 		}
 	}
@@ -330,53 +313,11 @@ void SceneGame::CheckCollide(float dt)
 
 void SceneGame::BattleStart(float dt)
 {
-	//worldView.setRotation(100.f);
-	//std::cout << "5여기 왔다." << std::endl;
-	//
-	////sf::sleep(sf::seconds(5.2f));
-	////battleNow = true;
-	//
-	//std::cout << "1여기 왔다." << std::endl;
-	//sceneClock.restart();
-	//sf::Time testtime = sceneClock.getElapsedTime();
-	//{
-
-	//	std::cout << testtime.asSeconds() << std::endl;
-
-		//if (!magnitudeScene && magnitudeTime < clock.getElapsedTime())
-		//{
-		//	worldView.setRotation(20.f);
-		//	//sf::sleep(sf::seconds(0.2f));
-		//	std::cout << "2여기 왔다." << std::endl;
-		//}
-		//if (magnitudeScene && magnitudeTime < clock.getElapsedTime())
-		//{	worldView.setRotation(-20.f);
-		//	//sf::sleep(sf::seconds(0.2f));
-		//	std::cout << "3여기 왔다." << std::endl;
-		//}
-
-	//	worldView.setRotation(0.f);
-	//	magnitudeScene = !magnitudeScene;
-	//	//sf::sleep(sf::seconds(0.2f));
-	//	std::cout << "4여기 왔다." << std::endl;
-	//	
-	//
-	//
-	//std::cout << "탈출했다 여기 왔다." << std::endl;
+	
 	SceneChange(dt);
 	if (sceneChangeTime < clock.getElapsedTime())
 		SCENE_MGR.ChangeScene(SceneId::Battle);
 
-
-
-
-	
-	//timer += dt;
-	/*if (duration - timer < 0.f)
-	{
-
-	}*/
-	//SCENE_MGR.ChangeScene(SceneId::Battle);
 }
 
 void SceneGame::SceneChange(float dt)
@@ -387,7 +328,7 @@ void SceneGame::SceneChange(float dt)
 	rect->SetPosition(uiView.getSize());
 	rect->SetOrigin(Origins::MC);
 	rect->rectangle.setScale(rectSize);
-	sf::Color end = sf::Color::Transparent;
+	sf::Color end = sf::Color::White;
 	//sf::Color start2 = sf::Color::Black;
 	sf::Color start1 = sf::Color::Black;//{ 255,255,255,0 };
 

@@ -61,5 +61,6 @@ public:
 	void SetSceneGame(SceneGame* scene) { sceneGame = scene; }
 	bool ChangePlayerMove();
 	bool GetPlayerMove();
+
 };
 
