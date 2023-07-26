@@ -2,12 +2,31 @@
 #include "Scene.h"
 #include "Framework.h"
 #include "AnimationController.h"
+#include "StringTable.h"
+#include "DataTableMgr.h"
+class SpriteGo;
+class TextGo;
 class SceneTitle :
     public Scene
 {
 protected:
-	AnimationController animation;
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
+	AnimationController animation1;
+	AnimationController animation2;
+	AnimationController animation3;
+	AnimationController animation4;
+
+	SpriteGo* mainPikachu = nullptr;
+	SpriteGo* mainSpinda = nullptr;;
+	SpriteGo* mainHooh1 = nullptr;
+	SpriteGo* mainHooh2 = nullptr;
+
+	TextGo* title = nullptr;
+	sf::Sound openSound;
+	std::wstring startMessage;
+
+	StringTable* stringTable = DATATABLE_MGR.Get<StringTable>(DataTable::Ids::String);
+
 public:
 
 	SceneTitle();
@@ -21,5 +40,7 @@ public:
 
 	virtual void Update(float dt) override;
 	virtual void Draw(sf::RenderWindow& window) override;
+
+	void ChangeScene();
 };
 

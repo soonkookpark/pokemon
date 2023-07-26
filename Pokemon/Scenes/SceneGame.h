@@ -11,8 +11,10 @@ protected:
 	Player* player;
 	
 	bool battleNow = false;
+	bool meetPokemon = false;
 	float moveSpeed = 0.f;
 	TileMap* tileMap = nullptr;
+
 	//--------------------
 	float transitionSpeed = 100.f; // 화면 전환 속도 (픽셀 단위)
 
@@ -22,6 +24,8 @@ protected:
 	sf::Time sceneChangeTime = sf::seconds(2.f);//신전환 시간.
 	sf::Time magnitudeTime = sf::seconds(0.2f);
 	sf::Time appearTime = sf::seconds(2.f);
+
+	sf::Sound ingameSound;
 
 	bool transitionInProgress = false;
 	sf::Vector2f rectSize = { FRAMEWORK.GetWindowSize().x,FRAMEWORK.GetWindowSize().y };

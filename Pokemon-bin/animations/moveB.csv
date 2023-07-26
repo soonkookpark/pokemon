@@ -1,5 +1,5 @@
 ID,FPS,LOOPTYPE,,
-MoveB,8,1,,
+MoveB,16,1,,
 ,,,,
 TEXTURE_ID,LEFT,TOP,WIDTH,HEIGHT
 graphics/character.png,471,0,157,150

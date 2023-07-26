@@ -20,6 +20,7 @@ protected:
 	AnimationController animation4;//
 	AnimationController animation5;//
 
+	sf::Sound battleSound;
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::RectangleShape rect;
 	int enemySize = 56;

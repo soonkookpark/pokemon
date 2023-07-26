@@ -21,6 +21,13 @@ protected:
 	// 가보면 인서트 하잕ㅎ아 init랑 쌍으로  animation클립에 잇는것들 확인
 	sf::Vector2f direction;
 	float speed = 500.f;
+	float tileSize = 1600.f;
+	int texInfo;
+
+	int myDirLeft;
+	int myDirRight;
+	int myDirUp;
+	int myDirDown;
 
 	bool filpX = false;
 	bool isGround = true;
@@ -29,10 +36,12 @@ protected:
 	std::string resourceListPath1;
 	ClipInfo currentClipInfo;
 	TileMap* tilemap;
-	sf::Vector2f charPos = { 18.5*150,39.5*150 };
+	sf::Vector2f charPos = { 18.5*150,38.5*150 };
 	sf::FloatRect wallBounds;
 	sf::Vector2f wallBoundsLT;
 	sf::Vector2f wallBoundsRB;
+	sf::Vector2f newPosition;
+	sf::Vector2i playerTileIndex = (sf::Vector2i)(charPos/ 150.f); // 플레이어가 속한 타일의 인덱스
 
 	sf::FloatRect objBounds;
 	sf::Vector2f objBoundsLT;
@@ -40,6 +49,7 @@ protected:
 	SceneGame* sceneGame;
 	int tileScale = 0;
 	bool playerCanMove = false;
+	bool move = false;
 
 
 public:
@@ -61,6 +71,9 @@ public:
 	void SetSceneGame(SceneGame* scene) { sceneGame = scene; }
 	bool ChangePlayerMove();
 	bool GetPlayerMove();
-
+	void PlayerMoveFind();
+	int FindTileIndex();
+	void FindTileInfo();
+	bool CheckTileInfo(sf::Vector2f info);
 };
 

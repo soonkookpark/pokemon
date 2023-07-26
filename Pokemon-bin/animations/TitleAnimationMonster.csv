@@ -1,0 +1,10 @@
+ID,FPS,LOOPTYPE,,
+TitleMonsterImage,12,1,,
+,,,,
+TEXTURE_ID,LEFT,TOP,WIDTH,HEIGHT
+graphics/TitleMonsterImage.png,7,641,64,39
+graphics/TitleMonsterImage.png,73,641,64,39
+graphics/TitleMonsterImage.png,139,641,64,47
+graphics/TitleMonsterImage.png,73,641,64,39
+graphics/TitleMonsterImage.png,205,641,64,39
+graphics/TitleMonsterImage.png,271,640,64,48
