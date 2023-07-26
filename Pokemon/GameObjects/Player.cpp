@@ -96,35 +96,7 @@ void Player::Update(float dt)
 		direction.x = 0.f;
 		direction.y = 0.f;
 	}
-	//sprite.move(-10.f, 0.f);
-	//이동
-	//if (INPUT_MGR.GetAxis(Axis::Horizontal) || INPUT_MGR.GetAxis(Axis::Vertical))
-	//{
-
-	//	if (direction.x != 0.f || direction.y != 0.f)
-	//	{
-	//		// 다음 타일의 인덱스를 계산합니다.
-	//		sf::Vector2i nextTilePos = (sf::Vector2i(GetPosition()) + sf::Vector2i(direction.x, direction.y))/150;
-
-	//		// 이동 가능한 타일이면 플레이어 위치 업데이트
-	//		if (tilemap->GetTile(nextTilePos.x, nextTilePos.y).texIndex == (int)TileInformation::Grass)
-	//		{
-	//			sf::Vector2f nextPos = sf::Vector2f(nextTilePos) * 150.f;
-	//			SetPosition(nextPos);
-	//		}
-	//	}
-	//}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+		
 	float magnitude = Utils::Magnitude(direction);
 
 
@@ -136,22 +108,7 @@ void Player::Update(float dt)
 	{
 		position = Utils::Clamp(position, wallBoundsLT, wallBoundsRB);
 	}
-	//position += direction*speed * dt;
-
-	//SetPosition(position);
 	
-	/*SetPosition(position);*/
-
-	//position += direction * speed * dt;
-	//SetPosition(position);
-	//if (INPUT_MGR.GetKeyDown(sf::Keyboard::LShift))
-	//{
-	//	speed *= 1.2f;
-	//}
-	//if (INPUT_MGR.GetKeyUp(sf::Keyboard::LShift))
-	//{
-	//	speed /= 1.2f;
-	//}
 	if (direction.x != 0.f || direction.y != 0.f)
 	{
 		auto min = std::min_element(clipInfos.begin(), clipInfos.end(),
@@ -216,22 +173,22 @@ void Player::PlayerMoveFind()
 		move = true;
 		//std::cout << myDirLeft<< std::endl;
 	}
-	if (INPUT_MGR.GetKey(sf::Keyboard::Left)&& direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left)&& direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x - 1, (float)playerTileIndex.y }))
 			direction.x = -1;
 	}
-	if (INPUT_MGR.GetKey(sf::Keyboard::Right) && direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right) && direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x + 1, (float)playerTileIndex.y }))
 			direction.x = 1.f;
 	}
-	if (INPUT_MGR.GetKey(sf::Keyboard::Up) && direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up) && direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x, (float)playerTileIndex.y - 1 }))
 			direction.y = -1.f;
 	}
-	if (INPUT_MGR.GetKey(sf::Keyboard::Down) && direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down) && direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x, (float)playerTileIndex.y + 1 }))
 			direction.y = 1.f;
@@ -270,29 +227,28 @@ void Player::PlayerMoveFind()
 	charPos += direction;
 	SetPosition(charPos);
 	FindTileInfo();
-	//int a = FindTileIndex();
+
 	
 }
 
-int Player::FindTileIndex()
+int Player::GetScore()
 {
-	//sf::Vector2i playerTileIndex = (sf::Vector2i)(GetPosition() / 150.f); // 플레이어가 속한 타일의 인덱스
-	tileSize = tilemap->tiles.size();
-	playerTileIndex = (sf::Vector2i)(charPos / 150.f);
-	for (int i = 0; i < tileSize; i++)
-	{
-		if (tilemap->tiles[i].x == playerTileIndex.x && tilemap->tiles[i].y == playerTileIndex.y)
-		{
-			texInfo = tilemap->tiles[i].texIndex;
-		}
-	}
+	return score;
+}
 
+void Player::ScoreUp()
+{
+	score++;
+}
 
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
-	{
-		std::cout << texInfo << std::endl;
-	}
-	return texInfo;
+int Player::GetLife()
+{
+	return playerLife;
+}
+
+void Player::LifeDown()
+{
+	playerLife--;
 }
 
 void Player::FindTileInfo()

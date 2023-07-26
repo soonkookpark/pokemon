@@ -11,6 +11,7 @@
 #include "StringTable.h"
 #include "DataTableMgr.h"
 #include "Monster.h"
+#include "Player.h"
 
 SceneBattle::SceneBattle() : Scene(SceneId::Battle)
 {
@@ -20,6 +21,7 @@ SceneBattle::SceneBattle() : Scene(SceneId::Battle)
 void SceneBattle::Init()
 {
 	Release();
+	
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
 	worldView.setSize(windowSize);
@@ -160,7 +162,7 @@ void SceneBattle::Release()
 void SceneBattle::Enter()
 {
 	MeetMonster();
-
+	
 	battleSound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sounds/Battle.wav"));
 	battleSound.setLoop(true);
 	battleSound.play();
@@ -352,6 +354,7 @@ void SceneBattle::Enter()
 	enemyDamageCheck = false;
 	
 	Scene::Enter();
+	
 }
 
 void SceneBattle::Exit()
@@ -836,21 +839,23 @@ void SceneBattle::CatchPokemon(float dt)
 			randomNum = Utils::RandomRange(1, 101);
 			if ((enemyNowHp / monster->GetMonsterHp()) <= 0.25)
 			{
-				randomNum -= 50;
+				randomNum += 30;
 			}
 			else if ((enemyNowHp / monster->GetMonsterHp()) <= 0.5)
 			{
-				randomNum -= 30;
+				randomNum += 10;
 			}
 		}
-		if(randomNum<70)
+		if(randomNum<monster->GetMonsterCatchRate())
 		{
 			catchCheck = true;
-			CatchFail(dt);
+			CatchSuccess();
+			//CatchFail(dt);
 		}
-		else if(randomNum>=70)
+		else if(randomNum>= monster->GetMonsterCatchRate())
 		{
 			catchCheck = true;
+			
 			CatchSuccess();
 			
 		}
@@ -867,6 +872,7 @@ void SceneBattle::CatchSuccess()
 	ChangeMyPokemonSkill();
 	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Z))
 	{
+		
 		BattleEnd();
 	}
 }
@@ -1159,6 +1165,7 @@ void SceneBattle::CatchFailedText(float dt)
 		
 	if (clock3.getElapsedTime() > sf::seconds(1.0f))
 	{
+
 		GoBackMenu();
 		BattleEnd();
 	}
@@ -1411,7 +1418,6 @@ void SceneBattle::MyMonsterHp(float dt)
 	if (mymonster->sprite.getPosition().y >= windowSize.y)
 	{
 		std::cout << "Å»ÃâÆ÷ÀÎÆ® ¿©±â Áö³µ´Ù" << std::endl;
-		
 		BattleEnd();
 	}
 }

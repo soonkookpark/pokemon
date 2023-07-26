@@ -11,6 +11,7 @@ class SpriteGo;
 class TextGo;
 class Monster;
 class MonsterBallEffectGo;
+class Player;
 class SceneBattle : public Scene
 {
 protected:
@@ -19,6 +20,7 @@ protected:
 	AnimationController animation3;//상대 몬스터볼 이펙트
 	AnimationController animation4;//
 	AnimationController animation5;//
+
 
 	sf::Sound battleSound;
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
@@ -32,7 +34,7 @@ protected:
 	int myHpRate = 100;
 	int mySpeed = 120;
 	int enemyAttack;
-
+	
 	int menuIndex = 0;
 	int skillIndex = 0;
 	int myDamage = 150;
@@ -44,7 +46,8 @@ protected:
 	int iNum = 0;
 	int jNum = 0;
 	int enemyDamage = 0;
-
+	int score = 0;
+	int playerLife = 0;
 
 	float timer = 0;
 	float myHp=198;

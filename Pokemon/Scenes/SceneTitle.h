@@ -21,6 +21,9 @@ protected:
 	SpriteGo* mainHooh1 = nullptr;
 	SpriteGo* mainHooh2 = nullptr;
 
+	sf::Clock titleClock;
+	bool timeCheck;
+
 	TextGo* title = nullptr;
 	sf::Sound openSound;
 	std::wstring startMessage;

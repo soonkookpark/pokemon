@@ -74,6 +74,7 @@ public:
 	std::string GetSkillName(int n);
 	int GetSkillDamage(int n);
 	int GetSpeed();
+	float GetMonsterCatchRate();
 	//sf::Vector2f GetMyPokemonRect();
 };
 

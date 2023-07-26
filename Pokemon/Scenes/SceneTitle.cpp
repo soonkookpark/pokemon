@@ -100,15 +100,16 @@ void SceneTitle::Enter()
 
 	Scene::Enter();
 	std::string startMessage1 = stringTable->Get("TITLEMESSAGE", Languages::KOR);
-	title->text.setString(startMessage1); //파일에서 읽어오는 것으로 변경
-	title->text.setCharacterSize(300);
-	title->text.setOutlineThickness(5.f);
+	title->text.setString(startMessage1); 
+	//title->text.setScale()
+	title->text.setCharacterSize(50);
+	//title->text.setOutlineThickness(5.f);
 	title->text.setFillColor(sf::Color::Black);
-	title->text.setOutlineColor(sf::Color::Black);
+	//title->text.setOutlineColor(sf::Color::Black);
 	title->SetOrigin(Origins::MC);
-	title->SetPosition(centerPos.x, centerPos.y * 0.5);
+	title->SetPosition(centerPos.x, centerPos.y +centerPos.y* 0.75);
 	title->sortLayer = 1;
-		
+	title->SetActive(true);
 	
 	
 }
@@ -130,7 +131,21 @@ void SceneTitle::Update(float dt)
 		std::cout << mousePos.x << "," << mousePos.y << std::endl;
 		//animation1.Play("MonsterBallEffect");
 	}
-	
+	if (!timeCheck)
+	{
+		titleClock.restart();
+		timeCheck = true;
+	}
+
+	if(titleClock.getElapsedTime()>sf::seconds(1.f))
+	{
+		timeCheck = false;
+		title->SetActive(true);
+	}
+	else if (titleClock.getElapsedTime() > sf::seconds(0.5f))
+	{
+		title->SetActive(false);
+	}
 
 	animation1.Update(dt);
 	animation2.Update(dt);

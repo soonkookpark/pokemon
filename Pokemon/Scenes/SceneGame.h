@@ -3,6 +3,8 @@
 #include "Framework.h"
 class Player;
 class TileMap;
+class RectangleGo;
+class TextGo;
 class SceneGame : public Scene
 {
 protected:
@@ -33,13 +35,22 @@ protected:
 	int playerHeight = FRAMEWORK.GetWindowSize().y;
 	int rectSnailSize = 10;
 	sf::Vector2f textPos = uiView.getSize();
+	sf::Vector2f boardSize = { 200,100 };
 	int timer = 0.f;
 	float duration = 5.f;
 	float fadeOut = 2.f;
 	bool magnitudeScene = false;
 	int randomNum; //·£´ý³Ñ¹ö
+	int score = 0;
+	int life = 0;
 	bool checkMonster = false;
 	sf::Vector2f playerPos;
+	RectangleGo* scoreBoard;
+
+	TextGo* scoreText;
+	TextGo* lifeText;
+	std::string scoreMessage;
+	std::string lifeMessage;
 public:
 	SceneGame();
 	virtual ~SceneGame() override = default;
@@ -55,5 +66,7 @@ public:
 	void CheckCollide(float dt);
 	void BattleStart(float dt);
 	void SceneChange(float dt);
+	void ShowInfo();
+	
 };
 

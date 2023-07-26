@@ -29,6 +29,9 @@ protected:
 	int myDirUp;
 	int myDirDown;
 
+	int score = 0;
+	int playerLife = 3;
+
 	bool filpX = false;
 	bool isGround = true;
 
@@ -72,7 +75,10 @@ public:
 	bool ChangePlayerMove();
 	bool GetPlayerMove();
 	void PlayerMoveFind();
-	int FindTileIndex();
+	int GetScore();
+	void ScoreUp();
+	int GetLife();
+	void LifeDown();
 	void FindTileInfo();
 	bool CheckTileInfo(sf::Vector2f info);
 };

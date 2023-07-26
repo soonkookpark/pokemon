@@ -117,6 +117,10 @@ int Monster::GetSpeed()
 {
 	return speed;
 }
+float Monster::GetMonsterCatchRate()
+{
+	return catchRate;
+}
 int Monster::GetSkillDamage(int n)
 {
 	switch (n)

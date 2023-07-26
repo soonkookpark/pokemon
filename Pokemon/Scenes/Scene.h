@@ -1,13 +1,11 @@
 #pragma once
 
 class GameObject;
-
 class Scene
 {
 protected:
 	Scene(const Scene&) = delete;
 	Scene& operator=(const Scene&) = delete;
-
 	SceneId sceneId;
 
 	std::vector<std::tuple<ResourceTypes, std::string>> resources;

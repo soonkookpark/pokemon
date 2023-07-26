@@ -1,7 +1,7 @@
 #pragma once
 #include "Singleton.h"
 #include "Scene.h"
-
+class Player;
 class SceneMgr : public Singleton<SceneMgr>
 {
 	friend Singleton<SceneMgr>;
@@ -9,7 +9,7 @@ class SceneMgr : public Singleton<SceneMgr>
 protected:
 	SceneMgr() = default;
 	virtual ~SceneMgr() override = default;
-
+	Player* player;
 	std::vector<Scene*> scenes;
 	SceneId currentSceneId = SceneId::None;
 	Scene* currentScene = nullptr;

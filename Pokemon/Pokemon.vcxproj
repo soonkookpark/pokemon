@@ -178,7 +178,6 @@
     <ClCompile Include="GameObjects\RectangleGo.cpp" />
     <ClCompile Include="GameObjects\Monster.cpp" />
     <ClCompile Include="DataTables\MonsterTable.cpp" />
-    <ClCompile Include="Scenes\SceneMyPokemon.cpp" />
     <ClCompile Include="Scenes\SceneBattle.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Scenes\SceneGame.cpp" />
@@ -212,7 +211,6 @@
     <ClInclude Include="GameObjects\RectangleGo.h" />
     <ClInclude Include="GameObjects\Monster.h" />
     <ClInclude Include="DataTables\MonsterTable.h" />
-    <ClInclude Include="Scenes\SceneMyPokemon.h" />
     <ClInclude Include="Scenes\SceneBattle.h" />
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Scenes\SceneGame.h" />

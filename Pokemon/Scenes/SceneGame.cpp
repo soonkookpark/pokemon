@@ -10,6 +10,8 @@
 #include "RectangleGo.h"
 #include "UIButton.h"
 #include "TileMap.h"
+#include "TextGo.h"
+#include <sstream>;
 
 SceneGame::SceneGame() : Scene(SceneId::Game)
 {
@@ -28,12 +30,17 @@ void SceneGame::Init() // 안바뀔거면 여기
 	//tileMap->SetOrigin(Origins::MC);
 	tileMap->SetPosition(0, 0);
 	
-	player = (Player*)AddGo(new Player());
+	player = (Player*)AddGo(new Player("player",""));
 	//player->SetPosition({ 18.5 * 150, 39.5 * 150 });
 	player->SetSceneGame(this);
 	player->sortLayer = 1;
 	player->sprite.setScale(1.f, 1.f);
-
+	
+	
+	/*scoreText= (TextGo*)AddGo(new TextGo("Score", "fonts/GANGWONSTATE.ttf"));
+	lifeText = (TextGo*)AddGo(new TextGo("Life", "fonts/GANGWONSTATE.ttf"));*/
+	
+	
 
 
 	groundBounds = tileMap->vertexArray.getBounds();
@@ -44,7 +51,7 @@ void SceneGame::Init() // 안바뀔거면 여기
 	player->SetWallBounds(groundBounds);
 	
 	RectangleGo* rect = (RectangleGo*)AddGo(new RectangleGo(rectSize,"FadeOut"));
-
+	scoreBoard = (RectangleGo*)AddGo(new RectangleGo(boardSize, "ScoreBoard"));
 
 	for (auto go : gameObjects)
 	{
@@ -66,13 +73,15 @@ void SceneGame::Release()
 
 void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 {
+
 	auto size = FRAMEWORK.GetWindowSize();
+	
 	meetPokemon = false;
 	ingameSound.setBuffer(*RESOURCE_MGR.GetSoundBuffer("sounds/Ingame.wav"));
 	ingameSound.setLoop(true);
 	ingameSound.play();
 	ingameSound.setVolume(50);
-
+	
 	//auto centerPos = size / 2.f;
 	worldView.setSize(size);
 	worldView.setCenter({ 0,0 });
@@ -83,7 +92,27 @@ void SceneGame::Enter() //엔터를 누르면 바뀌는건 여기
 	{
 		player->SetPosition(playerPos);
 	}*/
-	
+	/*scoreBoard->rectangle.setFillColor(sf::Color::Magenta);
+	scoreBoard->sortLayer = 211;
+	scoreBoard->SetPosition(0, 0);*/
+
+	/*std::stringstream ss;
+	ss << "score: " << score;
+	std::stringstream ss1;
+	ss1 << "Life: " << life;
+	scoreText->text.setCharacterSize(30);
+	scoreText->text.setString(ss.str());
+	scoreText->SetOrigin(Origins::TL);
+	scoreText->text.setPosition(10, 10);
+	scoreText->sortLayer = 212;
+
+	lifeText->text.setCharacterSize(30);
+	lifeText->text.setString(ss1.str());
+	lifeText->SetOrigin(Origins::TL);
+	lifeText->text.setPosition(10, 50);
+	lifeText->sortLayer = 212;*/
+
+
 	if (playerPos == sf::Vector2f{0, 0})
 	{
 		player->SetPosition({ 18.5 * 150, 39.5 * 150 });
@@ -141,7 +170,10 @@ void SceneGame::Update(float dt)
 		}
 	}*/
 
-	
+	/*std::stringstream ss;
+	ss << "score: " << score;
+	std::stringstream ss1;
+	ss1 << "Life: " << life;*/
 }
 
 void SceneGame::Draw(sf::RenderWindow& window)
@@ -278,4 +310,8 @@ void SceneGame::SceneChange(float dt)
 
 	rect->rectangle.setFillColor(sf::Color::Color(color1));
 
+}
+
+void SceneGame::ShowInfo()
+{
 }
