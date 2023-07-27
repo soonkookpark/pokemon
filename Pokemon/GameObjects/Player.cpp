@@ -173,22 +173,22 @@ void Player::PlayerMoveFind()
 		move = true;
 		//std::cout << myDirLeft<< std::endl;
 	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Left)&& direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKey(sf::Keyboard::Left)&& direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x - 1, (float)playerTileIndex.y }))
 			direction.x = -1;
 	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Right) && direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKey(sf::Keyboard::Right) && direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x + 1, (float)playerTileIndex.y }))
 			direction.x = 1.f;
 	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Up) && direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKey(sf::Keyboard::Up) && direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x, (float)playerTileIndex.y - 1 }))
 			direction.y = -1.f;
 	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::Down) && direction == sf::Vector2f{0, 0})
+	if (INPUT_MGR.GetKey(sf::Keyboard::Down) && direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x, (float)playerTileIndex.y + 1 }))
 			direction.y = 1.f;

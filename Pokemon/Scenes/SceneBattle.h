@@ -59,7 +59,6 @@ protected:
 	const float ballGravity = 3.f;
 	const float throwAngle = 45.f;
 	
-	//float enemyHpy = 100.f;
 	bool listMove = false;
 	bool userMove = false;
 	bool aniPlay = false;
@@ -134,7 +133,6 @@ protected:
 	TextGo* myPokemonName = nullptr;
 	
 
-	//SpriteGo* list = nullptr;
 	SpriteGo* mymonster = nullptr;
 	SpriteGo* user = nullptr;
 	SpriteGo* HpBar = nullptr;
@@ -185,7 +183,6 @@ public:
 	void ClearObjectPool(ObjectPool<T>& pool);
 
 	void Battle(float dt);
-	//void PlayerMenu();
 	void MoveCursorMenu();
 	void MoveCursorSkill();
 	void SetSkill();
@@ -195,14 +192,11 @@ public:
 	void SkillExplain(int n);
 	void EnemySkillExplain(int n);
 	
-	//void Bag();
 	void BattleEnd();
 	void MeetMonster();
 	void CatchPokemon(float dt);
 	void CatchSuccess();
 	void CatchFail(float dt);
-	/*float MoveUpBallTop(float dt);
-	float MoveDownBallTop(float dt);*/
 	void GoBackMenu();
 	void CatchText();
 	void CatchSuccessText();

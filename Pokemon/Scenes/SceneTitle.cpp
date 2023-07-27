@@ -18,8 +18,8 @@ SceneTitle::SceneTitle() :Scene(SceneId::Title)
 
 void SceneTitle::Init()
 {
-	
 	Release();
+
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	sf::Vector2f centerPos = windowSize * 0.5f;
 	worldView.setSize(windowSize);
@@ -33,7 +33,6 @@ void SceneTitle::Init()
 	title = (TextGo*)AddGo(new TextGo("titleMessage", "fonts/DOSPilgi.ttf"));
 	SpriteGo* BackGround = (SpriteGo*)AddGo(new SpriteGo("graphics/TitleImage.png","Background"));
 	BackGround->sortLayer = -1;
-	
 
 	animation1.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/TitleAnimationMonster.csv"));
 	animation2.AddClip(*RESOURCE_MGR.GetAnimationClip("animations/TitleAnimationMonster2.csv"));
@@ -60,8 +59,6 @@ void SceneTitle::Release()
 
 void SceneTitle::Enter()
 {
-	
-	
 	SpriteGo* BackGround = (SpriteGo*)FindGo("Background");
 	BackGround->SetOrigin(Origins::MC);
 	BackGround->SetPosition(FRAMEWORK.GetWindowSize().x / 2.f, FRAMEWORK.GetWindowSize().y / 2.f);
@@ -111,7 +108,6 @@ void SceneTitle::Enter()
 	title->sortLayer = 1;
 	title->SetActive(true);
 	
-	
 }
 
 void SceneTitle::Exit()
@@ -126,11 +122,7 @@ void SceneTitle::Update(float dt)
 	sf::Vector2f mousePos = INPUT_MGR.GetMousePos(); //마우스 위치
 	sf::Vector2f mouseWorldPos = SCENE_MGR.GetCurrScene()->ScreenToWorldPos(mousePos);
 	ChangeScene();
-	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
-	{
-		std::cout << mousePos.x << "," << mousePos.y << std::endl;
-		//animation1.Play("MonsterBallEffect");
-	}
+	
 	if (!timeCheck)
 	{
 		titleClock.restart();

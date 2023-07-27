@@ -17,6 +17,9 @@ protected:
 	float moveSpeed = 0.f;
 	TileMap* tileMap = nullptr;
 
+	sf::Color end;
+	sf::Color start1;
+
 	//--------------------
 	float transitionSpeed = 100.f; // 화면 전환 속도 (픽셀 단위)
 
@@ -37,7 +40,6 @@ protected:
 	sf::Vector2f textPos = uiView.getSize();
 	sf::Vector2f boardSize = { 200,100 };
 	int timer = 0.f;
-	float duration = 5.f;
 	float fadeOut = 2.f;
 	bool magnitudeScene = false;
 	int randomNum; //랜덤넘버
@@ -65,8 +67,6 @@ public:
 	virtual void Draw(sf::RenderWindow& window) override;
 	void CheckCollide(float dt);
 	void BattleStart(float dt);
-	void SceneChange(float dt);
-	void ShowInfo();
 	
 };
 

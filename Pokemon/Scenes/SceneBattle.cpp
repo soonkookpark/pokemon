@@ -55,7 +55,6 @@ void SceneBattle::Init()
 	catchMonsterBall = (SpriteGo*)AddGo(new SpriteGo("", "ShakeBallEffect"));
 	catchFailEffect = (SpriteGo*)AddGo(new SpriteGo("", "CatchFailEffect"));
 	
-
 	menuText1 = (TextGo*)AddGo(new TextGo("menuMessage1", "fonts/DOSPilgi.ttf"));
 	menuText2 = (TextGo*)AddGo(new TextGo("menuMessage2", "fonts/DOSPilgi.ttf"));
 	menuText3 = (TextGo*)AddGo(new TextGo("menuMessage3", "fonts/DOSPilgi.ttf"));
@@ -215,7 +214,6 @@ void SceneBattle::Enter()
 	catchFailEffect->sprite.setScale(3.f, 3.f);
 	catchFailEffect->sortLayer = 205;
 
-
 	//날라간 뒤 몬스터볼 이미지
 	sf::IntRect ballTopImageRect(0, 96, 16, 8);
 	ballTop->sprite.setTextureRect(ballTopImageRect);
@@ -245,7 +243,6 @@ void SceneBattle::Enter()
 	successBall->sprite.setScale(3.f, 3.f);
 	successBall->sortLayer = 224;
 	successBall->SetActive(false);
-
 
 	skillMessage1->SetActive(false);
 	skillMessage2->SetActive(false);
@@ -461,15 +458,11 @@ void SceneBattle::Update(float dt)
 				
 		}
 	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F2))
+	/*if (INPUT_MGR.GetKeyDown(sf::Keyboard::F2))
 	{
 		SCENE_MGR.ChangeScene(SceneId::Game);
-	}
-	if (INPUT_MGR.GetMouseButtonDown(sf::Mouse::Left))
-	{
-		std::cout << mousePos.x << "," << mousePos.y << std::endl;
-		animation1.Play("MonsterBallEffect");
-	}
+	}*/
+
 	animation1.Update(dt);
 	animation2.Update(dt);
 	animation3.Update(dt);
@@ -676,8 +669,6 @@ void SceneBattle::SkillExplain(int n)
 	skillText->SetActive(true);
 }
 
-
-
 void SceneBattle::BattleEnd()
 {
 	SCENE_MGR.ChangeScene(SceneId::Game);
@@ -698,7 +689,6 @@ void SceneBattle::MeetMonster()
 	enemyHp = monster->GetMonsterHp();
 	enemyNowHp = enemyHp;
 	myNowHp = myHp;
-	
 }
 
 void SceneBattle::CatchPokemon(float dt)
@@ -801,11 +791,6 @@ void SceneBattle::CatchPokemon(float dt)
 		ballCountCheck = false;
 		ballTopClock.restart();
 	}
-	if (INPUT_MGR.GetKeyDown(sf::Keyboard::F6))
-	{
-		std::cout << ballPos.y << "," << -ballPos.y << std::endl;
-		std::cout << bounceCount << std::endl;
-	}
 	if (!shakeEffect&&ball->GetActive() && bounceCount == 5)
 	{
 		ballPos.y = ballBottom->GetPosition().y;
@@ -814,11 +799,6 @@ void SceneBattle::CatchPokemon(float dt)
 		shakeEffect = true;
 		catchMonsterBall->SetActive(true);
 		catchMonsterBall->SetPosition(1695, 355);
-
-		
-		
-
-
 	}
 	ball->SetPosition(ballPos);
 	if (catchMonsterBall->GetActive()&& !shakeEffect && shakeCount < 2)
@@ -849,8 +829,7 @@ void SceneBattle::CatchPokemon(float dt)
 		if(randomNum<monster->GetMonsterCatchRate())
 		{
 			catchCheck = true;
-			CatchSuccess();
-			//CatchFail(dt);
+			CatchFail(dt);
 		}
 		else if(randomNum>= monster->GetMonsterCatchRate())
 		{
@@ -993,7 +972,6 @@ void SceneBattle::MoveCursorSkill()
 			}
 		}
 	}
-	
 }
 
 sf::Vector2f SceneBattle::CalculateOrbit(const sf::Vector2f& startPos, const sf::Vector2f& highPos, const sf::Vector2f& endPos, float moveT)
@@ -1001,14 +979,12 @@ sf::Vector2f SceneBattle::CalculateOrbit(const sf::Vector2f& startPos, const sf:
 	float u = 1.f - moveT;
 	float tt = moveT * moveT;
 	float uu = u * u;
-
 	sf::Vector2f p = uu * startPos;
 	p += 1.2f* u * moveT * highPos;
 	p += tt * endPos;
-
 	return p;
-	
 }
+
 void SceneBattle::GoBackMenu()
 {
 	menuIndex = 0;
@@ -1053,7 +1029,6 @@ void SceneBattle::CatchText()
 	if(!catchTextPrint)
 	{
 		catchTextMenu->SetActive(true);
-		//menu->sprite.setColor(sf::Color::White);
 		catchTextMenu->sprite.setScale(1.5f, 1.38f);
 		catchTextMenu->SetPosition(900, 600);
 		catchTextMenu->sortLayer = 211;
@@ -1075,8 +1050,6 @@ void SceneBattle::CatchText()
 		catchMessage2->SetPosition(973, 837);
 		catchMessage2->sortLayer = 212;
 		catchMessage2->SetActive(catchTextMenu->GetActive());
-	
-		//catchTextClock.restart();
 		catchTextPrint = true;
 	}
 	
@@ -1084,14 +1057,8 @@ void SceneBattle::CatchText()
 
 void SceneBattle::CatchSuccessText()
 {
-	if (catchTextPrint/*&&catchTextClock.getElapsedTime()>sf::seconds(2.f)*/)
+	if (catchTextPrint)
 	{
-		//catchTextMenu->SetActive(true);
-		//menu->sprite.setColor(sf::Color::White);
-		/*catchTextMenu->sprite.setScale(1.5f, 1.38f);
-		catchTextMenu->SetPosition(900, 600);
-		catchTextMenu->sortLayer = 211;*/
-
 		std::wstring catchFinish1 = stringTable->GetUni("CATCHFINISH1", Languages::KOR);
 		catchMessage1->text.setCharacterSize(40);
 		catchMessage1->text.setFillColor(sf::Color::Black);
@@ -1099,7 +1066,6 @@ void SceneBattle::CatchSuccessText()
 		catchMessage1->SetOrigin(Origins::TL);
 		catchMessage1->SetPosition(973, 678);
 		catchMessage1->sortLayer = 212;
-		//catchMessage1->SetActive(catchTextMenu->GetActive());
 
 		catchPokemonName->SetActive(true);
 		std::wstring monsterName = stringTable->GetUni(monster->GetMonsterName(), Languages::KOR);
@@ -1116,10 +1082,6 @@ void SceneBattle::CatchSuccessText()
 		catchMessage2->SetOrigin(Origins::TL);
 		catchMessage2->SetPosition(973, 837);
 		catchMessage2->sortLayer = 212;
-		//skillExplain->SetActive(catchTextMenu->GetActive());
-
-		//catchTextClock.restart();
-		//catchTextPrint = true;
 	}
 }
 
@@ -1165,11 +1127,9 @@ void SceneBattle::CatchFailedText(float dt)
 		
 	if (clock3.getElapsedTime() > sf::seconds(1.0f))
 	{
-
 		GoBackMenu();
 		BattleEnd();
 	}
-	
 }
 
 void SceneBattle::ChangeMyPokemon()
@@ -1288,7 +1248,6 @@ void SceneBattle::EnemyMonsterHp(float dt)
 		break;
 	}
 	SkillExplain(skillIndex);
-	//selectIcon->SetActive(false);
 	if (!damageCheck)
 	{
 		if (enemyHp == enemyNowHp)
@@ -1414,16 +1373,9 @@ void SceneBattle::MyMonsterHp(float dt)
 		std::cout << "여기왜 지났다?" << std::endl;
 	}
 	
-
 	if (mymonster->sprite.getPosition().y >= windowSize.y)
 	{
 		std::cout << "탈출포인트 여기 지났다" << std::endl;
 		BattleEnd();
 	}
-}
-
-
-void SceneBattle::BattleLose()
-{
-
 }
