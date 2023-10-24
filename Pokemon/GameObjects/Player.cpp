@@ -47,44 +47,12 @@ void Player::Reset()
 {
 	animation.Play("IdleF");
 	SetOrigin(origin);
-	//SetPosition(charPos);
 	SetFlipX(false);
-
-
 	currentClipInfo = clipInfos[3];
 }
 
 void Player::Update(float dt)
 {
-	//FindTileIndex();
-	//tilemap = (TileMap*)sceneGame->FindGo("Tile Map");
-	
-	
-	
-	/*{
-
-			if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y)
-			{
-	if (tilemap->tiles[i].texIndex != 30)
-	{
-		std::cout << "여긴 바닥이 아니야" << std::endl;
-		std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
-		if (player->GetDirection() == )
-			player->SetPosition(playerTileIndex.x * 150.f + 225.f, playerTileIndex.y * 150.f + 75.f);
-		std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;*/
-
-
-	//}
-	//	int tileSize = tileMap->tiles.size();
-	//	for (int i = 0; i < tileSize; i++)
-	//	{
-	/*sf::Vector2f tilePos = GetPosition() / 150.f;
-	sf::Vector2f tilePosLeft = { tilePos.x - 1.f, tilePos.y };
-	sf::Vector2f tilePosRight = { tilePos.x + 1.f, tilePos.y };
-	sf::Vector2f tilePosUp = { tilePos.x, tilePos.y -1.f};
-	sf::Vector2f tilePosDown = { tilePos.x, tilePos.y +1.f};
-	sf::Vector2f nextTileTextIndex;*/
-
 	if (!playerCanMove) 
 	{
 
@@ -171,12 +139,14 @@ void Player::PlayerMoveFind()
 		myDirUp = playerTileIndex.y - 1;
 		myDirDown = playerTileIndex.y + 1;
 		move = true;
+		playerStoped = true;
 		//std::cout << myDirLeft<< std::endl;
 	}
 	if (INPUT_MGR.GetKey(sf::Keyboard::Left)&& direction == sf::Vector2f{0, 0})
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x - 1, (float)playerTileIndex.y }))
 			direction.x = -1;
+
 	}
 	if (INPUT_MGR.GetKey(sf::Keyboard::Right) && direction == sf::Vector2f{0, 0})
 	{
@@ -192,44 +162,46 @@ void Player::PlayerMoveFind()
 	{
 		if (CheckTileInfo({ (float)playerTileIndex.x, (float)playerTileIndex.y + 1 }))
 			direction.y = 1.f;
-		
 	}
 	
 	if (direction == sf::Vector2f{0,0})
 	{
 		move = false;
+		playerStoped = false;
 	}
 	if (myDirLeft * 150+75== (int)charPos.x)
 	{
 		direction.x = 0;
 		std::cout << "저기" << std::endl;
 		move = false;
+		playerStoped = false;
 	}
 	if (myDirRight * 150 + 75 == (int)charPos.x)
 	{
 		direction.x = 0;
 		std::cout << "저기" << std::endl;
 		move = false;
+		playerStoped = false;
 	}
 	if (myDirUp * 150 + 75 == (int)charPos.y)
 	{
 		direction.y = 0;
 		std::cout << "저기" << std::endl;
 		move = false;
+		playerStoped = false;
 	}
 	if (myDirDown * 150 + 75 == (int)charPos.y)
 	{
 		direction.y= 0;
 		std::cout << "저기" << std::endl;
-		move = false;
+		move = false; 
+		playerStoped = false;
 	}
-	
 	charPos += direction;
 	SetPosition(charPos);
 	FindTileInfo();
-
-	
 }
+
 
 int Player::GetScore()
 {
@@ -314,33 +286,16 @@ bool Player::CheckTileInfo(sf::Vector2f info)
 				texIndex != static_cast<int>(TileInformation::Floor) /*&&
 				texIndex != (int)(TileInformation::Carpet)*/)
 			{
-				//std::cout << "여긴 바닥이 아니야" << std::endl;
-				/*if (INPUT_MGR.GetKeyDown(sf::Keyboard::Space))
-				{
-					(int)tileMap->tiles[i].texIndex;
-					player->ChangePlayerMove();
-					battleNow = false;
-				}*/
-				//std::cout << texIndex << std::endl;
-
-				//if (direction.x < 0)
-				//	direction.x = 0;
-				////player->SetPosition(playerTileIndex.x * 150.f/* + 150.f*/, player->GetPosition().y);
-				//if (direction.x > 0)
-				//	direction.x = 0;
-				////player->SetPosition(playerTileIndex.x * 150.f, player->GetPosition().y);
-				//if (direction.y < 0)
-				//	direction.y = 0; //player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150 /*+ 150*/);
-				//if (direction.y > 0)
-				//	direction.y = 0;
-				//player->SetPosition(player->GetPosition().x, playerTileIndex.y * 150);
-				//std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
-
 				return 0;
 			}
 			return 1;
 		}
 	}
+}
+
+bool Player::CanFindPokemon()
+{
+	return playerStoped;
 }
 
 bool Player::ChangePlayerMove()
@@ -361,36 +316,3 @@ void Player::SetWallBounds(const sf::FloatRect& bounds)
 	wallBoundsRB = { wallBounds.left - halfSize.x + wallBounds.width,
 		wallBounds.top - halfSize.y + wallBounds.height };
 }
-
-//void Player::PlayerMoveCheck()
-//{
-	//tilemap = (TileMap*)Go("Tile Map");
-	//sf::Vector2i playerTileIndex = (sf::Vector2i)(GetPosition() / 150.f); // 플레이어가 속한 타일의 인덱스
-	//std::cout << playerTileIndex.x << "," << playerTileIndex.y << std::endl;
-	
-
-	//		if (tileMap->tiles[i].x == playerTileIndex.x && tileMap->tiles[i].y == playerTileIndex.y)
-	//		{
-	//if (tilemap->tiles[i].texIndex != 30)
-	//{
-	//	//std::cout << "여긴 바닥이 아니야" << std::endl;
-	//	std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
-	//	if (player->GetDirection() == )
-	//		player->SetPosition(playerTileIndex.x * 150.f + 225.f, playerTileIndex.y * 150.f + 75.f);
-	//	std::cout << player->GetPosition().x << "," << player->GetPosition().y << std::endl;
-
-
-	//}
-//}
-
-//void Player::ObjBounds(const sf::FloatRect& bounds)
-//{
-//	sf::Vector2f halfSize = { sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2 };
-//
-//	wallBounds = bounds;
-//
-//	wallBoundsLT = { wallBounds.left + halfSize.x,
-//		wallBounds.top + halfSize.y };
-//	wallBoundsRB = { wallBounds.left - halfSize.x + wallBounds.width,
-//		wallBounds.top - halfSize.y + wallBounds.height };
-//}

@@ -110,7 +110,9 @@ void SceneGame::Update(float dt)
 	
 	sf::Vector2f windowSize = FRAMEWORK.GetWindowSize();
 	
-	CheckCollide(dt);
+	sf::Vector2f nowDirection = player->GetDirection();
+	if(nowDirection.x == 0&&nowDirection.y == 0)
+		CheckCollide(dt);
 
 	worldView.setCenter(player->GetPosition());
 	/*if (INPUT_MGR.GetKeyDown(sf::Keyboard::F1))
@@ -147,7 +149,7 @@ void SceneGame::CheckCollide(float dt)
 				{
 					randomNum = Utils::RandomRange(1, 100);
 					sceneClock.restart();
-					std::cout << randomNum << std::endl;
+					//std::cout << randomNum << std::endl;
 					checkMonster = true;
 				}
 				else if(!battleNow)

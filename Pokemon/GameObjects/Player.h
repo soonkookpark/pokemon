@@ -53,6 +53,7 @@ protected:
 	int tileScale = 0;
 	bool playerCanMove = false;
 	bool move = false;
+	bool playerStoped = false;
 
 
 public:
@@ -81,5 +82,6 @@ public:
 	void LifeDown();
 	void FindTileInfo();
 	bool CheckTileInfo(sf::Vector2f info);
+	bool CanFindPokemon();
 };
 
